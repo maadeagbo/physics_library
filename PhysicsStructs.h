@@ -6,6 +6,8 @@
 #pragma warning( disable : 4505 )  // unreferenced local function
 #pragma warning( disable : 4204 )  // nonstandard extension used : non-constant
                                    // aggregate initializer
+#elif __llvm__
+#pragma clang diagnostic ignored "-Wmissing-braces"
 #endif
 
 #include <inttypes.h>
@@ -76,7 +78,7 @@ struct DebugStr
     STRINGIFY_VEC4( b );
 #include "PhysicsTypes.inl"
 
-#define MAT_TYPES( X, Y ) MAT_LAYOUT( X, Y )
+#define MAT_TYPES( X, Y ) MAT_LAYOUT( X, Y );
 #include "PhysicsTypes.inl"
 
 #define STRINGIFY_MAT( X, Y ) \

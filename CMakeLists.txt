@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.7 FATAL_ERROR )
 
+# on windows use -T "llvm"
+
 ############################################################################
 
 option(USE_CLANG "Use clang to build" OFF)
@@ -129,7 +131,9 @@ endif( MSVC )
 
 target_include_directories( run_tests PRIVATE "${PROJECT_SOURCE_DIR}" )
 
+if( NOT MSVC )
 target_link_libraries( run_tests PRIVATE "-lm")
+endif( NOT MSVC )
 
 ###########################################################################
 
