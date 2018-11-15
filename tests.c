@@ -7,6 +7,9 @@
 
 int main( int argc, char const* argv[] )
 {
+	(void)argc;
+	(void)argv;
+
     printf( "Running math/physics library tests...\n" );
 
     fputs( "\nVector creation\n", stdout );
@@ -173,6 +176,26 @@ int main( int argc, char const* argv[] )
                  mag1,
                  mag2 );
     }
+
+	fputs( "\nMatrix creation\n", stdout );
+	
+    printf( "-- Test #1\n%s\n",
+            stringify( ( struct Mat2x2 ){} ).buffer );
+	
+    printf( "-- Test #2\n%s\n",
+            stringify( ident_m2x2() ).buffer );
+	
+    printf( "-- Test #3\n%s\n",
+            stringify( ident_m3x3() ).buffer );
+	
+    printf( "-- Test #4\n%s\n",
+            stringify( ident_m4x4() ).buffer );
+
+	struct Mat3x4 m34 = {0.f};
+	struct Mat4x3 m43 = {0.f};
+
+	printf( "-- Test #5\n%s\n",
+            stringify( mult_x( m34, m43 ) ).buffer );
 
     return 0;
 }

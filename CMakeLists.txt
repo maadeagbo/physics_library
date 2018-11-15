@@ -59,41 +59,41 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CMAKE_C_STANDARD 11)
 
-include(CheckCXXCompilerFlag)
-check_cxx_compiler_flag(-Wall HAS_WALL)
-check_cxx_compiler_flag(-pedantic HAS_PEDANTIC)
-check_cxx_compiler_flag(-O3 HAS_OPT3)
-check_cxx_compiler_flag(-O2 HAS_OPT2)
-check_cxx_compiler_flag(-Os HAS_OPT0S)
-check_cxx_compiler_flag(-g HAS_DEBUG)
+include(CheckCCompilerFlag)
+check_c_compiler_flag(-Wall HAS_WALL)
+check_c_compiler_flag(-pedantic HAS_PEDANTIC)
+check_c_compiler_flag(-O3 HAS_OPT3)
+check_c_compiler_flag(-O2 HAS_OPT2)
+check_c_compiler_flag(-Os HAS_OPT0S)
+check_c_compiler_flag(-g HAS_DEBUG)
 
 if( UNIX AND NOT USE_CLANG )
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -no-pie")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -no-pie")
 endif( UNIX AND NOT USE_CLANG )
 
 if(HAS_WALL)
 	if(MSVC)
-		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -W4 -WX")
+		set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -W4 -WX")
 	else()
-		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Werror")
+		set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall -Werror")
 	endif(MSVC)
 endif(HAS_WALL)
 
 if(HAS_OPT0S)
-	set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} -Os")
+	set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL} -Os")
 endif(HAS_OPT0S)
 
 if(HAS_DEBUG)
-	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
-	set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -g")
+	set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g")
+	set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} -g")
 endif(HAS_DEBUG)
 
 if(HAS_OPT3)
-	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
+	set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3")
 endif(HAS_OPT3)
 
 if(HAS_OPT2)
-	set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -O2")
+	set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} -O2")
 endif(HAS_OPT2)
 
 ###########################################################################
@@ -107,6 +107,7 @@ endif(MSVC)
 
 set( HEADERS 
 	"${PROJECT_SOURCE_DIR}/PhysicsStructs.h"
+	"${PROJECT_SOURCE_DIR}/PhysicsInterface.h"
 	"${PROJECT_SOURCE_DIR}/SimpleAssert.h"
 )
 
