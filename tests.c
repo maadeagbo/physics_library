@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdlib.h>
+#include <time.h>
+
 #include "PhysicsStructs.h"
 #include "PhysicsInterface.h"
 
@@ -187,8 +190,23 @@ int main( int argc, char const* argv[] )
 
     printf( "-- Test #4\n%s\n", stringify( ident_m4x4() ).buffer );
 
+    fputs( "\nMatrix multiply\n", stdout );
+
+    srand( time( 0 ) );
+
     struct Mat3x4 m34 = {0.f};
     struct Mat4x3 m43 = {0.f};
+
+    for( uint32_t i = 0; i < 4; i++ )
+    {
+        for( uint32_t j = 0; j < 3; j++ )
+        {
+            m34.data[i][j] = (float)rand() / (float)RAND_MAX;
+            m43.data[j][i] = (float)rand() / (float)RAND_MAX;
+        }
+    }
+    printf( "-- Matrix 3x4:: %s\n", stringify( m34 ).buffer );
+    printf( "-- Matrix 4x3:: %s\n", stringify( m43 ).buffer );
 
     printf( "-- Test #5\n%s\n", stringify( mult_x( m34, m43 ) ).buffer );
 

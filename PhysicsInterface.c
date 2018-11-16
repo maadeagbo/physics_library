@@ -236,12 +236,33 @@ IDENT_MAT_IMPL( 2, 2 )
 IDENT_MAT_IMPL( 3, 3 )
 IDENT_MAT_IMPL( 4, 4 )
 
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+static void transpose_impl( float output[],
+                            const float input[],
+                            uint32_t row,
+                            uint32_t col )
+{
+    // data is stored in column major order
+
+    for( uint32_t i = 0; i < col; i++ )
+        for( uint32_t j = 0; j < row; j++ )
+            ( output + j * col )[i] = ( input + i * row )[j];
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
 struct Mat3x3 mult_m3x4_m4x3( struct Mat3x4 lhs, struct Mat4x3 rhs )
 {
     UNUSED_VAR( lhs );
     UNUSED_VAR( rhs );
 
     struct Mat3x3 m = ident_m3x3();
+
+    float lhs_trans[3][4];
+    transpose_impl( (float*)lhs_trans, (float*)lhs.data, 3, 4 );
 
     // int mask = 0xf1;
 
