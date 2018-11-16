@@ -1,14 +1,21 @@
 #pragma once
 
 #ifdef __WIN32
+
 #pragma warning( disable : 4201 )  // unnamed union
 #pragma warning( disable : 4204 )  // struct initializer
 #pragma warning( disable : 4505 )  // unreferenced local function
 #pragma warning( disable : 4204 )  // nonstandard extension used : non-constant
                                    // aggregate initializer
 #elif __llvm__
+
 #pragma clang diagnostic ignored "-Wmissing-braces"              // for {{}}
 #pragma clang diagnostic ignored "-Wmissing-field-initializers"  // for { 0 }
+
+#else
+
+#pragma GCC diagnostic ignored "-Wmissing-braces"
+
 #endif
 
 #include <inttypes.h>

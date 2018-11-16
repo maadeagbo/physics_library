@@ -11,60 +11,25 @@ float magnitude_v2f( struct Vec2f v2f );
 float magnitude_v3f( struct Vec3f v3f );
 float magnitude_v4f( struct Vec4f v4f );
 
-#define NORMALIZE_VEC( VSIZE, VTYPE, ID )         \
-    struct Vec##VSIZE##ID normalize_v##VSIZE##ID( \
-        struct Vec##VSIZE##ID v##VSIZE );
+struct Vec2f normalize_v2f( struct Vec2f v2 );
+struct Vec3f normalize_v3f( struct Vec3f v3 );
+struct Vec4f normalize_v4f( struct Vec4f v4 );
 
-#define VEC_TYPES( a, b, c ) NORMALIZE_VEC( 2, a, b )
-#include "PhysicsTypes.inl"
-#define VEC_TYPES( a, b, c ) NORMALIZE_VEC( 3, a, b )
-#include "PhysicsTypes.inl"
-#define VEC_TYPES( a, b, c ) NORMALIZE_VEC( 4, a, b )
-#include "PhysicsTypes.inl"
+struct Vec2f mult_v2f( struct Vec2f v2, float s );
+struct Vec3f mult_v3f( struct Vec3f v3, float s );
+struct Vec4f mult_v4f( struct Vec4f v4, float s );
 
-#define MULT_VEC( VSIZE, VTYPE, ID )                                         \
-    struct Vec##VSIZE##ID mult_v##VSIZE##ID( struct Vec##VSIZE##ID v##VSIZE, \
-                                             VTYPE s );
+struct Vec2f add_v2f( struct Vec2f lhs, struct Vec2f rhs );
+struct Vec3f add_v3f( struct Vec3f lhs, struct Vec3f rhs );
+struct Vec4f add_v4f( struct Vec4f lhs, struct Vec4f rhs );
 
-#define VEC_TYPES( a, b, c ) MULT_VEC( 2, a, b )
-#include "PhysicsTypes.inl"
-#define VEC_TYPES( a, b, c ) MULT_VEC( 3, a, b )
-#include "PhysicsTypes.inl"
-#define VEC_TYPES( a, b, c ) MULT_VEC( 4, a, b )
-#include "PhysicsTypes.inl"
+struct Vec2f sub_v2f( struct Vec2f lhs, struct Vec2f rhs );
+struct Vec3f sub_v3f( struct Vec3f lhs, struct Vec3f rhs );
+struct Vec4f sub_v4f( struct Vec4f lhs, struct Vec4f rhs );
 
-#define ADD_VEC( VSIZE, VTYPE, ID )                                    \
-    struct Vec##VSIZE##ID add_v##VSIZE##ID( struct Vec##VSIZE##ID lhs, \
-                                            struct Vec##VSIZE##ID rhs );
-
-#define VEC_TYPES( a, b, c ) ADD_VEC( 2, a, b )
-#include "PhysicsTypes.inl"
-#define VEC_TYPES( a, b, c ) ADD_VEC( 3, a, b )
-#include "PhysicsTypes.inl"
-#define VEC_TYPES( a, b, c ) ADD_VEC( 4, a, b )
-#include "PhysicsTypes.inl"
-
-#define SUB_VEC( VSIZE, VTYPE, ID )                                    \
-    struct Vec##VSIZE##ID sub_v##VSIZE##ID( struct Vec##VSIZE##ID lhs, \
-                                            struct Vec##VSIZE##ID rhs );
-
-#define VEC_TYPES( a, b, c ) SUB_VEC( 2, a, b )
-#include "PhysicsTypes.inl"
-#define VEC_TYPES( a, b, c ) SUB_VEC( 3, a, b )
-#include "PhysicsTypes.inl"
-#define VEC_TYPES( a, b, c ) SUB_VEC( 4, a, b )
-#include "PhysicsTypes.inl"
-
-#define DOT_VEC( VSIZE, VTYPE, ID )                    \
-    float dot_v##VSIZE##ID( struct Vec##VSIZE##ID lhs, \
-                            struct Vec##VSIZE##ID rhs );
-
-#define VEC_TYPES( a, b, c ) DOT_VEC( 2, a, b )
-#include "PhysicsTypes.inl"
-#define VEC_TYPES( a, b, c ) DOT_VEC( 3, a, b )
-#include "PhysicsTypes.inl"
-#define VEC_TYPES( a, b, c ) DOT_VEC( 4, a, b )
-#include "PhysicsTypes.inl"
+float dot_v2f( struct Vec2f lhs, struct Vec2f rhs );
+float dot_v3f( struct Vec3f lhs, struct Vec3f rhs );
+float dot_v4f( struct Vec4f lhs, struct Vec4f rhs );
 
 struct Vec3f cross_v3f( struct Vec3f u, struct Vec3f v );
 
