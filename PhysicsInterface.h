@@ -39,15 +39,42 @@ IDENT_MAT( 2, 2 )
 IDENT_MAT( 3, 3 )
 IDENT_MAT( 4, 4 )
 
-#define MULT_MAT( X, Y, Z )                           \
-    struct Mat##X##x##Z mult_m##X##x##Y##_m##Y##x##Z( \
-        struct Mat##X##x##Y lhs, struct Mat##Y##x##Z rhs );
+#define MULT_MAT( X, Y, Z )                                                  \
+    struct Mat##X##x##Z mult_##X##x##Y##_##Y##x##Z( struct Mat##X##x##Y lhs, \
+                                                    struct Mat##Y##x##Z rhs );
 
 #define MAT_OP_TYPES( X, Y, Z ) MULT_MAT( X, Y, Z )
 #include "PhysicsTypes.inl"
 
+#define MULT_TRANSP( X, Y ) \
+    struct Mat##Y##x##X transpose_##X##x##Y( struct Mat##X##x##Y m );
+
+#define MAT_TYPES( X, Y ) MULT_TRANSP( X, Y )
+#include "PhysicsTypes.inl"
+
+#define MULT_SCALAR( X, Y ) \
+    struct Mat##X##x##Y mult_##X##x##Y( struct Mat##X##x##Y m, float s );
+
+#define MAT_TYPES( X, Y ) MULT_SCALAR( X, Y )
+#include "PhysicsTypes.inl"
+
+#define ADD_MAT( X, Y )                                         \
+    struct Mat##X##x##Y add_##X##x##Y( struct Mat##X##x##Y lhs, \
+                                       struct Mat##X##x##Y rhs );
+
+#define MAT_TYPES( X, Y ) ADD_MAT( X, Y )
+#include "PhysicsTypes.inl"
+
+#define EQUALS_M( X, Y ) \
+    bool equals_##X##x##Y( struct Mat##X##x##Y a, struct Mat##X##x##Y b );
+
+#define MAT_TYPES( X, Y ) EQUALS_M( X, Y )
+#include "PhysicsTypes.inl"
+
 //----------------------------------------------------------------
 //----------------------------------------------------------------
+
+#if _MSC_VER && !__INTEL_COMPILER
 
 // clang-format off
 
@@ -110,8 +137,10 @@ _Generic((X), \
 struct Mat3x4  : \
 \
 _Generic((Y), \
-	struct Mat4x3  : mult_m3x4_m4x3 ) \
+	struct Mat4x2  : mult_3x4_4x2 ) \
 \
 )(X, Y)
 
 // clang-format on
+
+#endif

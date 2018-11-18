@@ -239,6 +239,37 @@ IDENT_MAT_IMPL( 4, 4 )
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 
+static bool equals_mat_impl( const float dataA[],
+                             const float dataB[],
+                             uint32_t row,
+                             uint32_t column )
+{
+    // data is stored in column major order
+    bool is_equal = true;
+
+    for( uint32_t i = 0; i < column && is_equal; i++ )
+        for( uint32_t j = 0; j < row && is_equal; j++ )
+        {
+            uint32_t idx = i * row + j;
+            is_equal &= dataA[idx] >= ( dataB[idx] - __FLT_EPSILON__ ) &&
+                        dataA[idx] <= ( dataB[idx] + __FLT_EPSILON__ );
+        }
+
+    return is_equal;
+}
+
+#define EQUALS_M_IMPL( X, Y )                                             \
+    bool equals_##X##x##Y( struct Mat##X##x##Y a, struct Mat##X##x##Y b ) \
+    {                                                                     \
+        return equals_mat_impl( (float*)a.data, (float*)b.data, X, Y );   \
+    }
+
+#define MAT_TYPES( X, Y ) EQUALS_M_IMPL( X, Y )
+#include "PhysicsTypes.inl"
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
 static void transpose_impl( float output[],
                             const float input[],
                             uint32_t row,
@@ -251,22 +282,112 @@ static void transpose_impl( float output[],
             ( output + j * col )[i] = ( input + i * row )[j];
 }
 
+#define MULT_TRANSP_IMPL( X, Y )                                     \
+    struct Mat##Y##x##X transpose_##X##x##Y( struct Mat##X##x##Y m ) \
+    {                                                                \
+        struct Mat##Y##x##X out = {0};                               \
+        transpose_impl( (float*)out.data, (float*)m.data, X, Y );    \
+        return out;                                                  \
+    }
+
+#define MAT_TYPES( X, Y ) MULT_TRANSP_IMPL( X, Y )
+#include "PhysicsTypes.inl"
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 
-struct Mat3x3 mult_m3x4_m4x3( struct Mat3x4 lhs, struct Mat4x3 rhs )
+static void scalar_mult_impl( float scalar,
+                              float input[],
+                              uint32_t row,
+                              uint32_t col )
 {
-    UNUSED_VAR( lhs );
-    UNUSED_VAR( rhs );
+    // data is stored in column major order
 
-    struct Mat3x3 m = ident_m3x3();
-
-    float lhs_trans[3][4];
-    transpose_impl( (float*)lhs_trans, (float*)lhs.data, 3, 4 );
-
-    // int mask = 0xf1;
-
-    //
-
-    return m;
+    for( uint32_t i = 0; i < col; i++ )
+        for( uint32_t j = 0; j < row; j++ ) input[i * row + j] *= scalar;
 }
+
+#define MULT_SCALAR_IMPL( X, Y )                                         \
+    struct Mat##X##x##Y mult_##X##x##Y( struct Mat##X##x##Y m, float s ) \
+    {                                                                    \
+        scalar_mult_impl( s, (float*)m.data, X, Y );                     \
+        return m;                                                        \
+    }
+
+#define MAT_TYPES( X, Y ) MULT_SCALAR_IMPL( X, Y )
+#include "PhysicsTypes.inl"
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+static void add_mat_impl( float output[],
+                          const float dataA[],
+                          const float dataB[],
+                          uint32_t row,
+                          uint32_t col )
+{
+    // data is stored in column major order
+
+    for( uint32_t i = 0; i < col; i++ )
+        for( uint32_t j = 0; j < row; j++ )
+            output[i * row + j] = dataA[i * row + j] + dataB[i * row + j];
+}
+
+#define ADD_MAT_IMPL( X, Y )                                              \
+    struct Mat##X##x##Y add_##X##x##Y( struct Mat##X##x##Y lhs,           \
+                                       struct Mat##X##x##Y rhs )          \
+    {                                                                     \
+        struct Mat##X##x##Y out;                                          \
+        add_mat_impl(                                                     \
+            (float*)out.data, (float*)lhs.data, (float*)rhs.data, X, Y ); \
+        return out;                                                       \
+    }
+
+#define MAT_TYPES( X, Y ) ADD_MAT_IMPL( X, Y )
+#include "PhysicsTypes.inl"
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+// struct Mat3x2 mult_3x4_4x2( struct Mat3x4 lhs, struct Mat4x2 rhs )
+// {
+//     struct Mat3x2 m;
+
+//     float out[2][3] = {0};
+//     float lhs_trans[3][4] = {0};
+
+//     transpose_impl( (float*)lhs_trans, (float*)lhs.data, 3, 4 );
+
+//     for( uint32_t k = 0; k < 2; k++ )
+//         for( uint32_t j = 0; j < 3; j++ )
+//             for( uint32_t i = 0; i < 4; i++ )
+//                 out[k][j] += lhs_trans[j][i] * rhs.data[k][i];
+
+//     memcpy( m.data, out, sizeof( float ) * 3 * 2 );
+
+//     return m;
+// }
+
+#define MULT_MAT_IMPL( X, Y, Z )                                              \
+    struct Mat##X##x##Z mult_##X##x##Y##_##Y##x##Z( struct Mat##X##x##Y lhs,  \
+                                                    struct Mat##Y##x##Z rhs ) \
+    {                                                                         \
+        struct Mat##X##x##Z m;                                                \
+                                                                              \
+        float out[Z][X] = {0};                                                \
+        float lhs_trans[X][Y] = {0};                                          \
+                                                                              \
+        transpose_impl( (float*)lhs_trans, (float*)lhs.data, X, Y );          \
+                                                                              \
+        for( uint32_t k = 0; k < Z; k++ )                                     \
+            for( uint32_t j = 0; j < X; j++ )                                 \
+                for( uint32_t i = 0; i < Y; i++ )                             \
+                    out[k][j] += lhs_trans[j][i] * rhs.data[k][i];            \
+                                                                              \
+        memcpy( m.data, out, sizeof( float ) * X * Z );                       \
+                                                                              \
+        return m;                                                             \
+    }
+
+#define MAT_OP_TYPES( X, Y, Z ) MULT_MAT_IMPL( X, Y, Z )
+#include "PhysicsTypes.inl"

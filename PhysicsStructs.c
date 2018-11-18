@@ -30,29 +30,29 @@ struct DebugStr stringify_v4f( struct Vec4f v4 )
     return out;
 }
 
-#define STRINGIFY_MAT_IMPLEMENT( X, Y )                           \
-    struct DebugStr stringify_m##X##x##Y( struct Mat##X##x##Y m ) \
-    {                                                             \
-        struct DebugStr out;                                      \
-        uint32_t offset = 0;                                      \
-        snprintf( out.buffer, 256, "<Mat%ux%u>", X, Y );          \
-        offset = (uint32_t)strnlen( out.buffer, 256 );            \
-                                                                  \
-        for( uint32_t i = 0; i < Y; i++ )                         \
-        {                                                         \
-            snprintf( out.buffer + offset, 256 - offset, "\n" );  \
-            offset++;                                             \
-                                                                  \
-            for( uint32_t j = 0; j < X; j++ )                     \
-            {                                                     \
-                snprintf( out.buffer + offset,                    \
-                          256 - offset,                           \
-                          " %.5f",                                \
-                          m.data[j][i] );                         \
-                offset = (uint32_t)strnlen( out.buffer, 256 );    \
-            }                                                     \
-        }                                                         \
-        return out;                                               \
+#define STRINGIFY_MAT_IMPLEMENT( X, Y )                            \
+    struct DebugStr stringify_m##X##x##Y( struct Mat##X##x##Y m )  \
+    {                                                              \
+        struct DebugStr out;                                       \
+        uint32_t offset = 0;                                       \
+        snprintf( out.buffer, 256, "<Mat%ux%u>", X, Y );           \
+        offset = (uint32_t)strnlen( out.buffer, 256 );             \
+                                                                   \
+        for( uint32_t i = 0; i < X; i++ )                          \
+        {                                                          \
+            snprintf( out.buffer + offset, 256 - offset, "\n  " ); \
+            offset += 3;                                           \
+                                                                   \
+            for( uint32_t j = 0; j < Y; j++ )                      \
+            {                                                      \
+                snprintf( out.buffer + offset,                     \
+                          256 - offset,                            \
+                          " %.5f",                                 \
+                          m.data[j][i] );                          \
+                offset = (uint32_t)strnlen( out.buffer, 256 );     \
+            }                                                      \
+        }                                                          \
+        return out;                                                \
     }
 
 #define MAT_TYPES( X, Y ) STRINGIFY_MAT_IMPLEMENT( X, Y )

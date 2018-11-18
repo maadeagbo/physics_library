@@ -132,6 +132,26 @@ endif( MSVC )
 
 target_include_directories( run_tests PRIVATE "${PROJECT_SOURCE_DIR}" )
 
+# vectorization diagnostics
+if( CMAKE_CXX_COMPILER_ID MATCHES "Clang" )
+	target_compile_options( run_tests PRIVATE
+		-Rpass=loop-vectorize
+#		-Rpass-missed=loop-vectorize
+#		-Rpass-analysis=loop-vectorize
+	)
+elseif( CMAKE_CXX_COMPILER_ID MATCHES "GNU" )
+	target_compile_options( run_tests PRIVATE
+		-ftree-vectorize
+		-fopt-info-vec-optimized
+#		-fopt-info-vec-missed
+	)
+elseif( CMAKE_CXX_COMPILER_ID MATCHES "MSVC" )
+	target_compile_options( run_tests PRIVATE
+		"/Qvec-report:1"
+#		"/Qvec-report:2"
+	)
+endif( CMAKE_CXX_COMPILER_ID MATCHES "Clang" )
+
 if( NOT MSVC )
 target_link_libraries( run_tests PRIVATE "-lm")
 endif( NOT MSVC )

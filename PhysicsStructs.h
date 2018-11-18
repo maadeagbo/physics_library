@@ -77,6 +77,8 @@ struct DebugStr stringify_v4f( struct Vec4f v4 );
     STRINGIFY_MAT( X, Y );
 #include "PhysicsTypes.inl"
 
+#if _MSC_VER && !__INTEL_COMPILER
+
 // clang-format off
 
 #define stringify(X) _Generic((X),	\
@@ -95,3 +97,5 @@ default         : stringify_v4f     \
 )(X)
 
 // clang-format on
+
+#endif
