@@ -320,6 +320,10 @@ struct Mat3x3 inverse_3x3( struct Mat3x3 m )
 struct Mat4x4 inverse_4x4( struct Mat4x4 m )
 {
     float det = determinant_4x4( m );
+	
+    assertf( det > 0.f + EPSILON_F || det < 0.f + EPSILON_F,
+             "Cannot calculate inverse on degerate matrix %s\n",
+             stringify_m4x4( m ).buffer );
 
 	struct Mat4x4 adjoint = {0};
 
