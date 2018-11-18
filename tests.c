@@ -183,7 +183,7 @@ int main( int argc, char const* argv[] )
                  mag2 );
     }
 
-    fputs( "\nMatrix creation\n", stdout );
+    fputs( "\nMatrix creation\n\n", stdout );
 
     struct Mat4x2 test_mat = ( struct Mat4x2 ){.data[0][1] = 0.3f};
     test_mat.data[1][0] = 0.6f;
@@ -209,9 +209,9 @@ int main( int argc, char const* argv[] )
                 add_4x4( ident_m4x4(), mult_4x4( ident_m4x4(), -5.f ) ) )
                 .buffer );
 
-    fputs( "\nMatrix multiply\n", stdout );
+    fputs( "\nMatrix multiply\n\n", stdout );
 
-    srand( time( 0 ) );
+    srand( (unsigned)time( 0 ) );
 
     struct Mat3x4 m34 = {0.f};
     struct Mat4x2 m42 = {0.f};
@@ -227,8 +227,42 @@ int main( int argc, char const* argv[] )
     printf( "-- Matrix A:: %s\n", stringify_m3x4( m34 ).buffer );
     printf( "-- Matrix B:: %s\n", stringify_m4x2( m42 ).buffer );
 
-    printf( "-- Result\n%s\n",
+    printf( "-- Multiplication Result\n%s\n",
             stringify_m3x2( mult_3x4_4x2( m34, m42 ) ).buffer );
+
+    fputs( "\nMatrix inversion & determinant\n", stdout );
+
+    struct Mat2x2 m22;
+
+    for( uint32_t i = 0; i < 2; i++ )
+        for( uint32_t j = 0; j < 2; j++ )
+            m22.data[j][i] = (float)rand() / (float)RAND_MAX;
+
+    printf( "-- Normal 2x2 \n%s\n", stringify_m2x2( m22 ).buffer );
+
+    printf( "-- Normal 2x2 determinant : %.5f\n", determinant_2x2( m22 ) );
+
+    struct Mat2x2 inv_m22 = inverse_2x2( m22 );
+    printf( "-- Inverted 2x2 \n%s\n", stringify_m2x2( inv_m22 ).buffer );
+
+    printf( "-- \nInversion test #1\n%s\n",
+            stringify_m2x2( mult_2x2_2x2( m22, inv_m22 ) ).buffer );
+
+    struct Mat3x3 m33;
+
+    for( uint32_t i = 0; i < 3; i++ )
+        for( uint32_t j = 0; j < 3; j++ )
+            m33.data[j][i] = (float)rand() / (float)RAND_MAX;
+
+    printf( "-- Normal 3x3 \n%s\n", stringify_m3x3( m33 ).buffer );
+
+    printf( "-- Normal 3x3 determinant : %.5f\n", determinant_3x3( m33 ) );
+
+    struct Mat3x3 inv_m33 = inverse_3x3( m33 );
+    printf( "-- Inverted 3x3 \n%s\n", stringify_m3x3( inv_m33 ).buffer );
+
+    printf( "-- \nInversion test #2\n%s\n",
+            stringify_m3x3( mult_3x3_3x3( m33, inv_m33 ) ).buffer );
 
     return 0;
 }

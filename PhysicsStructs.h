@@ -1,7 +1,6 @@
 #pragma once
 
-#ifdef __WIN32
-
+#ifdef _WIN32
 #pragma warning( disable : 4201 )  // unnamed union
 #pragma warning( disable : 4204 )  // struct initializer
 #pragma warning( disable : 4505 )  // unreferenced local function
@@ -16,7 +15,7 @@
 
 #pragma GCC diagnostic ignored "-Wmissing-braces"
 
-#endif
+#endif // _WIN32
 
 #include <inttypes.h>
 #include "SimpleAssert.h"

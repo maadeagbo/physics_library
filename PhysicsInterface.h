@@ -71,6 +71,14 @@ IDENT_MAT( 4, 4 )
 #define MAT_TYPES( X, Y ) EQUALS_M( X, Y )
 #include "PhysicsTypes.inl"
 
+float determinant_2x2( struct Mat2x2 m );
+float determinant_3x3( struct Mat3x3 m );
+float determinant_4x4( struct Mat4x4 m );
+
+struct Mat2x2 inverse_2x2( struct Mat2x2 m );
+struct Mat3x3 inverse_3x3( struct Mat3x3 m );
+struct Mat4x4 inverse_4x4( struct Mat4x4 m );
+
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 

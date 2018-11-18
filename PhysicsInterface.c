@@ -4,6 +4,14 @@
 
 #define UNUSED_VAR( X ) (void)X
 
+#ifdef _WIN32
+#include <float.h>
+
+#define EPSILON_F FLT_EPSILON
+#else
+#define EPSILON_F __FLT_EPSILON__
+#endif  // _WIN32
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 
@@ -13,8 +21,8 @@ static bool equals_impl( const float dataA[],
 {
     bool is_equal = true;
     for( uint32_t i = 0; i < count && is_equal; i++ )
-        is_equal &= dataA[i] >= ( dataB[i] - __FLT_EPSILON__ ) &&
-                    dataA[i] <= ( dataB[i] + __FLT_EPSILON__ );
+        is_equal &= dataA[i] >= ( dataB[i] - EPSILON_F ) &&
+                    dataA[i] <= ( dataB[i] + EPSILON_F );
     return is_equal;
 }
 
@@ -223,7 +231,7 @@ struct Vec3f cross_v3f( struct Vec3f u, struct Vec3f v )
 #define IDENT_MAT_IMPL( X, Y )                                      \
     struct Mat##X##x##Y ident_m##X##x##Y()                          \
     {                                                               \
-        struct Mat##X##x##Y m = {};                                 \
+        struct Mat##X##x##Y m = {0};                                \
                                                                     \
         uint32_t max_val = X < Y ? X : Y;                           \
                                                                     \
@@ -235,6 +243,88 @@ struct Vec3f cross_v3f( struct Vec3f u, struct Vec3f v )
 IDENT_MAT_IMPL( 2, 2 )
 IDENT_MAT_IMPL( 3, 3 )
 IDENT_MAT_IMPL( 4, 4 )
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+float determinant_2x2( struct Mat2x2 m )
+{
+    return m.data[0][0] * m.data[1][1] - m.data[1][0] * m.data[0][1];
+}
+
+float determinant_3x3( struct Mat3x3 m )
+{
+    return m.data[0][0] *
+               ( m.data[1][1] * m.data[2][2] - m.data[2][1] * m.data[1][2] ) +
+           m.data[1][0] *
+               ( m.data[2][1] * m.data[0][2] - m.data[0][1] * m.data[2][2] ) +
+           m.data[2][0] *
+               ( m.data[0][1] * m.data[1][2] - m.data[1][1] * m.data[0][2] );
+}
+
+float determinant_4x4( struct Mat4x4 m )
+{
+	UNUSED_VAR( m );
+    float output = 0.f;
+    return output;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+struct Mat2x2 inverse_2x2( struct Mat2x2 m )
+{
+    float det = determinant_2x2( m );
+
+    assertf( det > 0.f + EPSILON_F || det < 0.f + EPSILON_F,
+             "Cannot calculate inverse on degerate matrix %s\n",
+             stringify_m2x2( m ).buffer );
+
+    struct Mat2x2 adjoint = {
+        .data = {{m.data[1][1], -m.data[0][1]}, {-m.data[1][0], m.data[0][0]}}};
+    return mult_2x2( adjoint, 1.f / det );
+}
+
+struct Mat3x3 inverse_3x3( struct Mat3x3 m )
+{
+    float det = determinant_3x3( m );
+
+    assertf( det > 0.f + EPSILON_F || det < 0.f + EPSILON_F,
+             "Cannot calculate inverse on degerate matrix %s\n",
+             stringify_m3x3( m ).buffer );
+
+    struct Mat3x3 adjoint = {
+        .data = {
+			{
+				m.data[1][1] * m.data[2][2] - m.data[2][1] * m.data[1][2], 
+				m.data[2][1] * m.data[0][2] - m.data[0][1] * m.data[2][2],
+				m.data[0][1] * m.data[1][2] - m.data[1][1] * m.data[0][2],
+			},
+			{
+				m.data[2][0] * m.data[1][2] - m.data[1][0] * m.data[2][2], 
+				m.data[0][0] * m.data[2][2] - m.data[2][0] * m.data[0][2],
+				m.data[1][0] * m.data[0][2] - m.data[0][0] * m.data[1][2],
+			},
+			{
+				m.data[1][0] * m.data[2][1] - m.data[2][0] * m.data[1][1], 
+				m.data[2][0] * m.data[0][1] - m.data[0][0] * m.data[2][1],
+				m.data[0][0] * m.data[1][1] - m.data[1][0] * m.data[0][1],
+			}
+		}
+	};
+    
+	return mult_3x3( adjoint, 1.f / det );
+}
+
+
+struct Mat4x4 inverse_4x4( struct Mat4x4 m )
+{
+    float det = determinant_4x4( m );
+
+	struct Mat4x4 adjoint = {0};
+
+	return mult_4x4( adjoint, 1.f/det );
+}
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -251,8 +341,8 @@ static bool equals_mat_impl( const float dataA[],
         for( uint32_t j = 0; j < row && is_equal; j++ )
         {
             uint32_t idx = i * row + j;
-            is_equal &= dataA[idx] >= ( dataB[idx] - __FLT_EPSILON__ ) &&
-                        dataA[idx] <= ( dataB[idx] + __FLT_EPSILON__ );
+            is_equal &= dataA[idx] >= ( dataB[idx] - EPSILON_F ) &&
+                        dataA[idx] <= ( dataB[idx] + EPSILON_F );
         }
 
     return is_equal;
