@@ -264,9 +264,38 @@ float determinant_3x3( struct Mat3x3 m )
 
 float determinant_4x4( struct Mat4x4 m )
 {
-	UNUSED_VAR( m );
-    float output = 0.f;
-    return output;
+    // Determinant logic uses scalar triple product and cofactor expansion
+
+    float val_00 = m.data[1][1] * m.data[2][2] * m.data[3][3] -
+                   m.data[1][1] * m.data[2][3] * m.data[3][2] -
+                   m.data[2][1] * m.data[1][2] * m.data[3][3] +
+                   m.data[2][1] * m.data[1][3] * m.data[3][2] +
+                   m.data[3][1] * m.data[1][2] * m.data[2][3] -
+                   m.data[3][1] * m.data[1][3] * m.data[2][2];
+
+    float val_10 = -m.data[1][0] * m.data[2][2] * m.data[3][3] +
+                   m.data[1][0] * m.data[2][3] * m.data[3][2] +
+                   m.data[2][0] * m.data[1][2] * m.data[3][3] -
+                   m.data[2][0] * m.data[1][3] * m.data[3][2] -
+                   m.data[3][0] * m.data[1][2] * m.data[2][3] +
+                   m.data[3][0] * m.data[1][3] * m.data[2][2];
+
+    float val_20 = m.data[1][0] * m.data[2][1] * m.data[3][3] -
+                   m.data[1][0] * m.data[2][3] * m.data[3][1] -
+                   m.data[2][0] * m.data[1][1] * m.data[3][3] +
+                   m.data[2][0] * m.data[1][3] * m.data[3][1] +
+                   m.data[3][0] * m.data[1][1] * m.data[2][3] -
+                   m.data[3][0] * m.data[1][3] * m.data[2][1];
+
+    float val_30 = -m.data[1][0] * m.data[2][1] * m.data[3][2] +
+                   m.data[1][0] * m.data[2][2] * m.data[3][1] +
+                   m.data[2][0] * m.data[1][1] * m.data[3][2] -
+                   m.data[2][0] * m.data[1][2] * m.data[3][1] -
+                   m.data[3][0] * m.data[1][1] * m.data[2][2] +
+                   m.data[3][0] * m.data[1][2] * m.data[2][1];
+
+    return m.data[0][0] * val_00 + m.data[0][1] * val_10 +
+           m.data[0][2] * val_20 + m.data[0][3] * val_30;
 }
 
 //-----------------------------------------------------------------------------
@@ -294,40 +323,152 @@ struct Mat3x3 inverse_3x3( struct Mat3x3 m )
              stringify_m3x3( m ).buffer );
 
     struct Mat3x3 adjoint = {
-        .data = {
-			{
-				m.data[1][1] * m.data[2][2] - m.data[2][1] * m.data[1][2], 
-				m.data[2][1] * m.data[0][2] - m.data[0][1] * m.data[2][2],
-				m.data[0][1] * m.data[1][2] - m.data[1][1] * m.data[0][2],
-			},
-			{
-				m.data[2][0] * m.data[1][2] - m.data[1][0] * m.data[2][2], 
-				m.data[0][0] * m.data[2][2] - m.data[2][0] * m.data[0][2],
-				m.data[1][0] * m.data[0][2] - m.data[0][0] * m.data[1][2],
-			},
-			{
-				m.data[1][0] * m.data[2][1] - m.data[2][0] * m.data[1][1], 
-				m.data[2][0] * m.data[0][1] - m.data[0][0] * m.data[2][1],
-				m.data[0][0] * m.data[1][1] - m.data[1][0] * m.data[0][1],
-			}
-		}
-	};
-    
-	return mult_3x3( adjoint, 1.f / det );
-}
+        .data = {{
+                     m.data[1][1] * m.data[2][2] - m.data[2][1] * m.data[1][2],
+                     m.data[2][1] * m.data[0][2] - m.data[0][1] * m.data[2][2],
+                     m.data[0][1] * m.data[1][2] - m.data[1][1] * m.data[0][2],
+                 },
+                 {
+                     m.data[2][0] * m.data[1][2] - m.data[1][0] * m.data[2][2],
+                     m.data[0][0] * m.data[2][2] - m.data[2][0] * m.data[0][2],
+                     m.data[1][0] * m.data[0][2] - m.data[0][0] * m.data[1][2],
+                 },
+                 {
+                     m.data[1][0] * m.data[2][1] - m.data[2][0] * m.data[1][1],
+                     m.data[2][0] * m.data[0][1] - m.data[0][0] * m.data[2][1],
+                     m.data[0][0] * m.data[1][1] - m.data[1][0] * m.data[0][1],
+                 }}};
 
+    return mult_3x3( adjoint, 1.f / det );
+}
 
 struct Mat4x4 inverse_4x4( struct Mat4x4 m )
 {
-    float det = determinant_4x4( m );
-	
+    // Solution uses cofactor expansion
+
+    struct Mat4x4 adjoint = {0};
+
+    adjoint.data[0][0] = m.data[1][1] * m.data[2][2] * m.data[3][3] -
+                         m.data[1][1] * m.data[2][3] * m.data[3][2] -
+                         m.data[2][1] * m.data[1][2] * m.data[3][3] +
+                         m.data[2][1] * m.data[1][3] * m.data[3][2] +
+                         m.data[3][1] * m.data[1][2] * m.data[2][3] -
+                         m.data[3][1] * m.data[1][3] * m.data[2][2];
+
+    adjoint.data[1][0] = -m.data[1][0] * m.data[2][2] * m.data[3][3] +
+                         m.data[1][0] * m.data[2][3] * m.data[3][2] +
+                         m.data[2][0] * m.data[1][2] * m.data[3][3] -
+                         m.data[2][0] * m.data[1][3] * m.data[3][2] -
+                         m.data[3][0] * m.data[1][2] * m.data[2][3] +
+                         m.data[3][0] * m.data[1][3] * m.data[2][2];
+
+    adjoint.data[2][0] = m.data[1][0] * m.data[2][1] * m.data[3][3] -
+                         m.data[1][0] * m.data[2][3] * m.data[3][1] -
+                         m.data[2][0] * m.data[1][1] * m.data[3][3] +
+                         m.data[2][0] * m.data[1][3] * m.data[3][1] +
+                         m.data[3][0] * m.data[1][1] * m.data[2][3] -
+                         m.data[3][0] * m.data[1][3] * m.data[2][1];
+
+    adjoint.data[3][0] = -m.data[1][0] * m.data[2][1] * m.data[3][2] +
+                         m.data[1][0] * m.data[2][2] * m.data[3][1] +
+                         m.data[2][0] * m.data[1][1] * m.data[3][2] -
+                         m.data[2][0] * m.data[1][2] * m.data[3][1] -
+                         m.data[3][0] * m.data[1][1] * m.data[2][2] +
+                         m.data[3][0] * m.data[1][2] * m.data[2][1];
+
+    float det =
+        m.data[0][0] * adjoint.data[0][0] + m.data[0][1] * adjoint.data[1][0] +
+        m.data[0][2] * adjoint.data[2][0] + m.data[0][3] * adjoint.data[3][0];
+
     assertf( det > 0.f + EPSILON_F || det < 0.f + EPSILON_F,
              "Cannot calculate inverse on degerate matrix %s\n",
              stringify_m4x4( m ).buffer );
 
-	struct Mat4x4 adjoint = {0};
+    adjoint.data[0][1] = -m.data[0][1] * m.data[2][2] * m.data[3][3] +
+                         m.data[0][1] * m.data[2][3] * m.data[3][2] +
+                         m.data[2][1] * m.data[0][2] * m.data[3][3] -
+                         m.data[2][1] * m.data[0][3] * m.data[3][2] -
+                         m.data[3][1] * m.data[0][2] * m.data[2][3] +
+                         m.data[3][1] * m.data[0][3] * m.data[2][2];
 
-	return mult_4x4( adjoint, 1.f/det );
+    adjoint.data[1][1] = m.data[0][0] * m.data[2][2] * m.data[3][3] -
+                         m.data[0][0] * m.data[2][3] * m.data[3][2] -
+                         m.data[2][0] * m.data[0][2] * m.data[3][3] +
+                         m.data[2][0] * m.data[0][3] * m.data[3][2] +
+                         m.data[3][0] * m.data[0][2] * m.data[2][3] -
+                         m.data[3][0] * m.data[0][3] * m.data[2][2];
+
+    adjoint.data[2][1] = -m.data[0][0] * m.data[2][1] * m.data[3][3] +
+                         m.data[0][0] * m.data[2][3] * m.data[3][1] +
+                         m.data[2][0] * m.data[0][1] * m.data[3][3] -
+                         m.data[2][0] * m.data[0][3] * m.data[3][1] -
+                         m.data[3][0] * m.data[0][1] * m.data[2][3] +
+                         m.data[3][0] * m.data[0][3] * m.data[2][1];
+
+    adjoint.data[3][1] = m.data[0][0] * m.data[2][1] * m.data[3][2] -
+                         m.data[0][0] * m.data[2][2] * m.data[3][1] -
+                         m.data[2][0] * m.data[0][1] * m.data[3][2] +
+                         m.data[2][0] * m.data[0][2] * m.data[3][1] +
+                         m.data[3][0] * m.data[0][1] * m.data[2][2] -
+                         m.data[3][0] * m.data[0][2] * m.data[2][1];
+
+    adjoint.data[0][2] = m.data[0][1] * m.data[1][2] * m.data[3][3] -
+                         m.data[0][1] * m.data[1][3] * m.data[3][2] -
+                         m.data[1][1] * m.data[0][2] * m.data[3][3] +
+                         m.data[1][1] * m.data[0][3] * m.data[3][2] +
+                         m.data[3][1] * m.data[0][2] * m.data[1][3] -
+                         m.data[3][1] * m.data[0][3] * m.data[1][2];
+
+    adjoint.data[1][2] = -m.data[0][0] * m.data[1][2] * m.data[3][3] +
+                         m.data[0][0] * m.data[1][3] * m.data[3][2] +
+                         m.data[1][0] * m.data[0][2] * m.data[3][3] -
+                         m.data[1][0] * m.data[0][3] * m.data[3][2] -
+                         m.data[3][0] * m.data[0][2] * m.data[1][3] +
+                         m.data[3][0] * m.data[0][3] * m.data[1][2];
+
+    adjoint.data[2][2] = m.data[0][0] * m.data[1][1] * m.data[3][3] -
+                         m.data[0][0] * m.data[1][3] * m.data[3][1] -
+                         m.data[1][0] * m.data[0][1] * m.data[3][3] +
+                         m.data[1][0] * m.data[0][3] * m.data[3][1] +
+                         m.data[3][0] * m.data[0][1] * m.data[1][3] -
+                         m.data[3][0] * m.data[0][3] * m.data[1][1];
+
+    adjoint.data[3][2] = -m.data[0][0] * m.data[1][1] * m.data[3][2] +
+                         m.data[0][0] * m.data[1][2] * m.data[3][1] +
+                         m.data[1][0] * m.data[0][1] * m.data[3][2] -
+                         m.data[1][0] * m.data[0][2] * m.data[3][1] -
+                         m.data[3][0] * m.data[0][1] * m.data[1][2] +
+                         m.data[3][0] * m.data[0][2] * m.data[1][1];
+
+    adjoint.data[0][3] = -m.data[0][1] * m.data[1][2] * m.data[2][3] +
+                         m.data[0][1] * m.data[1][3] * m.data[2][2] +
+                         m.data[1][1] * m.data[0][2] * m.data[2][3] -
+                         m.data[1][1] * m.data[0][3] * m.data[2][2] -
+                         m.data[2][1] * m.data[0][2] * m.data[1][3] +
+                         m.data[2][1] * m.data[0][3] * m.data[1][2];
+
+    adjoint.data[1][3] = m.data[0][0] * m.data[1][2] * m.data[2][3] -
+                         m.data[0][0] * m.data[1][3] * m.data[2][2] -
+                         m.data[1][0] * m.data[0][2] * m.data[2][3] +
+                         m.data[1][0] * m.data[0][3] * m.data[2][2] +
+                         m.data[2][0] * m.data[0][2] * m.data[1][3] -
+                         m.data[2][0] * m.data[0][3] * m.data[1][2];
+
+    adjoint.data[2][3] = -m.data[0][0] * m.data[1][1] * m.data[2][3] +
+                         m.data[0][0] * m.data[1][3] * m.data[2][1] +
+                         m.data[1][0] * m.data[0][1] * m.data[2][3] -
+                         m.data[1][0] * m.data[0][3] * m.data[2][1] -
+                         m.data[2][0] * m.data[0][1] * m.data[1][3] +
+                         m.data[2][0] * m.data[0][3] * m.data[1][1];
+
+    adjoint.data[3][3] = m.data[0][0] * m.data[1][1] * m.data[2][2] -
+                         m.data[0][0] * m.data[1][2] * m.data[2][1] -
+                         m.data[1][0] * m.data[0][1] * m.data[2][2] +
+                         m.data[1][0] * m.data[0][2] * m.data[2][1] +
+                         m.data[2][0] * m.data[0][1] * m.data[1][2] -
+                         m.data[2][0] * m.data[0][2] * m.data[1][1];
+
+    return mult_4x4( adjoint, 1.f / det );
 }
 
 //-----------------------------------------------------------------------------

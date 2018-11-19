@@ -15,7 +15,7 @@
 
 #pragma GCC diagnostic ignored "-Wmissing-braces"
 
-#endif // _WIN32
+#endif  // _WIN32
 
 #include <inttypes.h>
 #include "SimpleAssert.h"
