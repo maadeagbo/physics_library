@@ -228,6 +228,36 @@ struct Vec3f cross_v3f( struct Vec3f u, struct Vec3f v )
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 
+// sourced from David Hammen :
+// https://stackoverflow.com/questions/11667783/quaternion-and-normalization
+
+static struct Quat normalize_quat( struct Quat q )
+{
+    float denom;
+    double sq_mag = q.i * q.i + q.j * q.j + q.k * q.k + q.real * q.real;
+
+    // check if quaternion needs to be normailzed
+    // if so and if falls with a certain tolerance, use 1st order Pade approx,
+    // else use sqrt
+
+    if( fabs( 1.0 - sq_mag ) < 2.107342e-08 )
+        denom = 2.f / ( 1.f + (float)sq_mag );
+    else
+        denom = 1.f / sqrtf( (float)sq_mag );
+
+    struct Quat norm_q = {
+        .i = q.i / denom,
+        .j = q.j / denom,
+        .k = q.k / denom,
+        .real = q.real / denom,
+    };
+
+    return norm_q;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
 struct Quat quat_from_euler( float radian_pitch,
                              float radian_yaw,
                              float radian_roll )
@@ -278,7 +308,7 @@ struct Quat quat_from_euler_v( struct Vec3f v )
 
 struct Vec3f quat_to_euler( struct Quat q )
 {
-    // Quaternion should be normalized
+    q = normalize_quat( q );
 
     // test for gimbal lock in euler conversion
     float test_gimbal = q.x * q.y + q.z * q.w;
@@ -308,6 +338,8 @@ struct Mat4x4 quat_to_mat( struct Quat q )
 {
     // homogeneous expression ( non-unit quaternions will be a scalar multiple)
 
+    q = normalize_quat( q );
+
     float qx2 = q.x * q.x;
     float qy2 = q.y * q.y;
     float qz2 = q.z * q.z;
@@ -325,7 +357,22 @@ struct Mat4x4 quat_to_mat( struct Quat q )
                                        2.f * ( q.y * q.z - q.w * q.x ),
                                        qw2 - qx2 - qy2 + qz2,
                                        0.f},
-                                      {0}}};
+                                      {0.f, 0.f, 0.f, 1.f}}};
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+struct Quat mult_q( struct Quat lhs, struct Quat rhs )
+{
+    struct Quat q = {
+        .x = lhs.w * rhs.x + lhs.x * rhs.w + lhs.y * rhs.z - lhs.z * rhs.y,
+        .y = lhs.w * rhs.y + lhs.x * rhs.z + lhs.y * rhs.w - lhs.z * rhs.x,
+        .z = lhs.w * rhs.z + lhs.x * rhs.y + lhs.y * rhs.x - lhs.z * rhs.w,
+        .w = lhs.w * rhs.w - lhs.x * rhs.x - lhs.y * rhs.y - lhs.z * rhs.z,
+    };
+
+    return normalize_quat( q );
 }
 
 //-----------------------------------------------------------------------------
@@ -334,6 +381,8 @@ struct Mat4x4 quat_to_mat( struct Quat q )
 struct Vec3f rotate_qv( struct Quat q, struct Vec3f v )
 {
     // Implementation can be up to ~30% faster the q*v*q_conjugate
+
+    q = normalize_quat( q );
 
     struct Vec3f q_vec = {.x = q.i, .y = q.j, .z = q.z};
 

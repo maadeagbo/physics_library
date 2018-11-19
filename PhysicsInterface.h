@@ -102,6 +102,8 @@ struct Quat quat_from_euler_v( struct Vec3f v );
 // x : pitch, y : yaw, z : roll
 struct Vec3f quat_to_euler( struct Quat q );
 
+struct Quat mult_q( struct Quat lhs, struct Quat rhs );
+
 struct Vec3f rotate_qv( struct Quat q, struct Vec3f v );
 
 struct Mat4x4 quat_to_mat( struct Quat q );
