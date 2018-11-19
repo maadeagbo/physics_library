@@ -286,5 +286,32 @@ int main( int argc, char const* argv[] )
                 stringify_m4x4( mult_4x4_4x4( m44, inv_m44 ) ).buffer );
     }
 
+    {
+        struct Mat3x4 m34 = {0};
+        m34.data[0][0] = 1.f;
+        m34.data[1][0] = 1.f;
+        m34.data[1][1] = 1.f;
+        m34.data[2][2] = 1.f;
+
+        struct Vec4f v4 = {.x = 4.f, .y = 3.f, .z = 2.f, .w = 1.f};
+        struct Vec3f result = mult_3x4v( m34, v4 );
+        printf( "\nMatrix 3x4 vector multiply\nv: %s\nm: %s\nanswer: %s\n",
+                stringify_v4f( v4 ).buffer,
+                stringify_m3x4( m34 ).buffer,
+                stringify_v3f( result ).buffer );
+    }
+
+    {
+        struct Mat4x4 m44 = ident_m4x4();
+        m44.data[0][3] = 1.f;
+
+        struct Vec4f v4 = {.x = 4.f, .y = 3.f, .z = 2.f, .w = 1.f};
+        struct Vec4f result = mult_4x4v( m44, v4 );
+        printf( "\nMatrix 4x4 vector multiply\nv: %s\nm: %s\nanswer: %s\n",
+                stringify_v4f( v4 ).buffer,
+                stringify_m4x4( m44 ).buffer,
+                stringify_v4f( result ).buffer );
+    }
+
     return 0;
 }

@@ -79,6 +79,13 @@ struct Mat2x2 inverse_2x2( struct Mat2x2 m );
 struct Mat3x3 inverse_3x3( struct Mat3x3 m );
 struct Mat4x4 inverse_4x4( struct Mat4x4 m );
 
+#define MULT_MAT_VEC( X, Y )                                   \
+    struct Vec##X##f mult_##X##x##Y##v( struct Mat##X##x##Y m, \
+                                        struct Vec##Y##f v );
+
+#define MAT_TYPES( X, Y ) MULT_MAT_VEC( X, Y )
+#include "PhysicsTypes.inl"
+
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 

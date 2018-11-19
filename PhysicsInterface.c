@@ -626,3 +626,25 @@ static void add_mat_impl( float output[],
 
 #define MAT_OP_TYPES( X, Y, Z ) MULT_MAT_IMPL( X, Y, Z )
 #include "PhysicsTypes.inl"
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+#define MULT_MAT_VEC_IMPL( X, Y )                                        \
+    struct Vec##X##f mult_##X##x##Y##v( struct Mat##X##x##Y m,           \
+                                        struct Vec##Y##f v )             \
+    {                                                                    \
+        struct Vec##X##f result = {0};                                   \
+                                                                         \
+        float trans_mat[X][Y] = {0};                                     \
+        transpose_impl( (float*)trans_mat, (const float*)m.data, X, Y ); \
+                                                                         \
+        for( uint32_t i = 0; i < X; i++ )                                \
+            for( uint32_t j = 0; j < Y; j++ )                            \
+                result.data[i] += trans_mat[i][j] * v.data[j];           \
+                                                                         \
+        return result;                                                   \
+    }
+
+#define MAT_TYPES( X, Y ) MULT_MAT_VEC_IMPL( X, Y )
+#include "PhysicsTypes.inl"
