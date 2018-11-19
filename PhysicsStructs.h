@@ -58,6 +58,20 @@ struct Vec4f
     };
 };
 
+struct Quat
+{
+    union {
+        struct
+        {
+            float i, j, k, real;
+        };
+        struct
+        {
+            float x, y, z, w;
+        };
+    };
+};
+
 struct DebugStr stringify_v2f( struct Vec2f v2 );
 struct DebugStr stringify_v3f( struct Vec3f v3 );
 struct DebugStr stringify_v4f( struct Vec4f v4 );

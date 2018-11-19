@@ -33,6 +33,9 @@ float dot_v4f( struct Vec4f lhs, struct Vec4f rhs );
 
 struct Vec3f cross_v3f( struct Vec3f u, struct Vec3f v );
 
+//----------------------------------------------------------------
+//----------------------------------------------------------------
+
 #define IDENT_MAT( X, Y ) struct Mat##X##x##Y ident_m##X##x##Y();
 
 IDENT_MAT( 2, 2 )
@@ -85,6 +88,23 @@ struct Mat4x4 inverse_4x4( struct Mat4x4 m );
 
 #define MAT_TYPES( X, Y ) MULT_MAT_VEC( X, Y )
 #include "PhysicsTypes.inl"
+
+//----------------------------------------------------------------
+//----------------------------------------------------------------
+
+struct Quat quat_from_euler( float radian_pitch,
+                             float radian_yaw,
+                             float radian_roll );
+
+// x : pitch, y : yaw, z : roll
+struct Quat quat_from_euler_v( struct Vec3f v );
+
+// x : pitch, y : yaw, z : roll
+struct Vec3f quat_to_euler( struct Quat q );
+
+struct Vec3f rotate_qv( struct Quat q, struct Vec3f v );
+
+struct Mat4x4 quat_to_mat( struct Quat q );
 
 //----------------------------------------------------------------
 //----------------------------------------------------------------

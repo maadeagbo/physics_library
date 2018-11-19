@@ -228,6 +228,124 @@ struct Vec3f cross_v3f( struct Vec3f u, struct Vec3f v )
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 
+struct Quat quat_from_euler( float radian_pitch,
+                             float radian_yaw,
+                             float radian_roll )
+{
+    float half_yaw = radian_yaw * 0.5f;
+    float half_pitch = radian_pitch * 0.5f;
+    float half_roll = radian_roll * 0.5f;
+
+    float cos_y = cosf( half_yaw );
+    float sin_y = sinf( half_yaw );
+    float cos_p = cosf( half_pitch );
+    float sin_p = sinf( half_pitch );
+    float cos_r = cosf( half_roll );
+    float sin_r = sinf( half_roll );
+
+    return ( struct Quat ){
+        cos_y * sin_r * cos_p - sin_y * cos_r * sin_p,
+        cos_y * cos_r * sin_p + sin_y * sin_r * cos_p,
+        sin_y * cos_r * cos_p - cos_y * sin_r * sin_p,
+        cos_y * cos_r * cos_p + sin_y * sin_r * sin_p,
+    };
+}
+
+struct Quat quat_from_euler_v( struct Vec3f v )
+{
+    // x : pitch, y : yaw, z : roll
+    float half_yaw = v.y * 0.5f;
+    float half_pitch = v.x * 0.5f;
+    float half_roll = v.z * 0.5f;
+
+    float cos_y = cosf( half_yaw );
+    float sin_y = sinf( half_yaw );
+    float cos_p = cosf( half_pitch );
+    float sin_p = sinf( half_pitch );
+    float cos_r = cosf( half_roll );
+    float sin_r = sinf( half_roll );
+
+    return ( struct Quat ){
+        cos_y * sin_r * cos_p - sin_y * cos_r * sin_p,
+        cos_y * cos_r * sin_p + sin_y * sin_r * cos_p,
+        sin_y * cos_r * cos_p - cos_y * sin_r * sin_p,
+        cos_y * cos_r * cos_p + sin_y * sin_r * sin_p,
+    };
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+struct Vec3f quat_to_euler( struct Quat q )
+{
+    // Quaternion should be normalized
+
+    // test for gimbal lock in euler conversion
+    float test_gimbal = q.x * q.y + q.z * q.w;
+
+    if( test_gimbal > 0.499f )
+    {
+        return ( struct Vec3f ){
+            (float)M_PI / 2.f, 2.f * atan2f( q.x, q.w ), 0.f};
+    }
+    else if( test_gimbal < -0.499f )
+    {
+        return ( struct Vec3f ){
+            (float)M_PI / -2.f, -2.f * atan2f( q.x, q.w ), 0.f};
+    }
+
+    return ( struct Vec3f ){atan2f( 2.f * ( q.w * q.x + q.y * q.z ),
+                                    1.f - 2.f * ( q.x * q.x + q.y * q.y ) ),
+                            asinf( 2.f * ( q.w * q.y - q.z * q.x ) ),
+                            atan2f( 2.f * ( q.w * q.z + q.x * q.y ),
+                                    1.f - 2.f * ( q.y * q.y + q.z * q.z ) )};
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+struct Mat4x4 quat_to_mat( struct Quat q )
+{
+    // homogeneous expression ( non-unit quaternions will be a scalar multiple)
+
+    float qx2 = q.x * q.x;
+    float qy2 = q.y * q.y;
+    float qz2 = q.z * q.z;
+    float qw2 = q.w * q.w;
+
+    return ( struct Mat4x4 ){.data = {{qw2 + qx2 - qy2 - qz2,
+                                       2.f * ( q.x * q.y + q.w * q.z ),
+                                       2.f * ( q.x * q.z - q.w * q.y ),
+                                       0.f},
+                                      {2.f * ( q.x * q.y - q.w * q.z ),
+                                       qw2 - qx2 + qy2 - qz2,
+                                       2.f * ( q.w * q.x + q.y * q.z ),
+                                       0.f},
+                                      {2.f * ( q.w * q.y + q.x * q.z ),
+                                       2.f * ( q.y * q.z - q.w * q.x ),
+                                       qw2 - qx2 - qy2 + qz2,
+                                       0.f},
+                                      {0}}};
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+struct Vec3f rotate_qv( struct Quat q, struct Vec3f v )
+{
+    // Implementation can be up to ~30% faster the q*v*q_conjugate
+
+    struct Vec3f q_vec = {.x = q.i, .y = q.j, .z = q.z};
+
+    struct Vec3f t_vec = cross_v3f( mult_v3f( q_vec, 2.f ), v );
+
+    return add_v3f( add_v3f( v, mult_v3f( t_vec, q.w ) ),
+                    cross_v3f( q_vec, t_vec ) );
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
 #define IDENT_MAT_IMPL( X, Y )                                      \
     struct Mat##X##x##Y ident_m##X##x##Y()                          \
     {                                                               \
