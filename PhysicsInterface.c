@@ -12,6 +12,16 @@
 #define EPSILON_F __FLT_EPSILON__
 #endif  // _WIN32
 
+float deg_to_rad( float deg )
+{
+    return deg * 0.01745329251994329576923690768489;
+}
+
+float rad_to_deg( float rad )
+{
+    return rad * 57.295779513082320876798154814105;
+}
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 
@@ -262,9 +272,15 @@ struct Quat quat_from_euler( float radian_pitch,
                              float radian_yaw,
                              float radian_roll )
 {
-    float half_yaw = radian_yaw * 0.5f;
-    float half_pitch = radian_pitch * 0.5f;
-    float half_roll = radian_roll * 0.5f;
+    // Calclations are based on NASA aerplane corrdinate space:
+    // x: forward, y: right, z: downward
+    // In order to fit my coordinate system, input has been shifted
+    // My system is:
+    // x: right, y: upward, z: forward
+
+    float half_yaw = radian_roll * 0.5f;
+    float half_pitch = radian_yaw * 0.5f;
+    float half_roll = radian_pitch * 0.5f;
 
     float cos_y = cosf( half_yaw );
     float sin_y = sinf( half_yaw );
@@ -283,10 +299,15 @@ struct Quat quat_from_euler( float radian_pitch,
 
 struct Quat quat_from_euler_v( struct Vec3f v )
 {
-    // x : pitch, y : yaw, z : roll
-    float half_yaw = v.y * 0.5f;
-    float half_pitch = v.x * 0.5f;
-    float half_roll = v.z * 0.5f;
+    // Calclations are based on NASA aerplane corrdinate space:
+    // x: forward, y: right, z: downward
+    // In order to fit my coordinate system, input has been shifted
+    // My system is:
+    // x: right, y: upward, z: forward
+
+    float half_pitch = v.y * 0.5f;
+    float half_yaw = v.z * 0.5f;
+    float half_roll = v.x * 0.5f;
 
     float cos_y = cosf( half_yaw );
     float sin_y = sinf( half_yaw );
@@ -378,7 +399,7 @@ struct Quat mult_q( struct Quat lhs, struct Quat rhs )
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 
-struct Vec3f rotate_qv( struct Quat q, struct Vec3f v )
+struct Vec3f mult_qv( struct Quat q, struct Vec3f v )
 {
     // Implementation can be up to ~30% faster the q*v*q_conjugate
 

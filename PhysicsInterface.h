@@ -3,6 +3,12 @@
 #include <stdbool.h>
 #include "PhysicsStructs.h"
 
+float deg_to_rad( float deg );
+
+float rad_to_deg( float rad );
+
+//-----------------------------------------------------------------------------
+
 bool equals_v2f( struct Vec2f lhs, struct Vec2f rhs );
 bool equals_v3f( struct Vec3f lhs, struct Vec3f rhs );
 bool equals_v4f( struct Vec4f lhs, struct Vec4f rhs );
@@ -104,7 +110,7 @@ struct Vec3f quat_to_euler( struct Quat q );
 
 struct Quat mult_q( struct Quat lhs, struct Quat rhs );
 
-struct Vec3f rotate_qv( struct Quat q, struct Vec3f v );
+struct Vec3f mult_qv( struct Quat q, struct Vec3f v );
 
 struct Mat4x4 quat_to_mat( struct Quat q );
 

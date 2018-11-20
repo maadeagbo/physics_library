@@ -313,5 +313,19 @@ int main( int argc, char const* argv[] )
                 stringify_v4f( result ).buffer );
     }
 
+    fputs( "\nQuaternions\n", stdout );
+
+    {
+        struct Quat q = quat_from_euler( deg_to_rad( -90.f ), 0.f, 0.f );
+        struct Vec3f v = {.z = 1.f};
+
+        printf( "\nRotating a vecter pointing in the Z-dir by 90 deg:: %s\n",
+                stringify_v3f( mult_qv( q, v ) ).buffer );
+
+        v = quat_to_euler( q );
+
+        printf( "%s\n", stringify_v3f( v ).buffer );
+    }
+
     return 0;
 }
