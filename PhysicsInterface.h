@@ -8,6 +8,7 @@ float deg_to_rad( float deg );
 float rad_to_deg( float rad );
 
 //-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 bool equals_v2f( struct Vec2f lhs, struct Vec2f rhs );
 bool equals_v3f( struct Vec3f lhs, struct Vec3f rhs );
