@@ -114,6 +114,10 @@ struct Vec3f mult_qv( struct Quat q, struct Vec3f v );
 
 struct Mat4x4 quat_to_mat( struct Quat q );
 
+struct Quat conjugate( struct Quat q );
+
+float dot_q( struct Quat q1, struct Quat q2 );
+
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 
