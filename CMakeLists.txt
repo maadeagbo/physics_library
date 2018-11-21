@@ -168,7 +168,7 @@ set_property(DIRECTORY ${PROJECT_SOURCE_DIR}
 # clang-format
 if( UNIX )
 	add_custom_target(
-		cfmt
+		cfmt_pl
 		COMMAND /usr/bin/clang-format
 		-style=file
 		-i
