@@ -28,17 +28,26 @@ Vec2f normalize_v( Vec2f v2 ) { normalize_v2f( v2 ); }
 Vec3f normalize_v( Vec3f v3 ) { normalize_v3f( v3 ); }
 Vec4f normalize_v( Vec4f v4 ) { normalize_v4f( v4 ); }
 
-Vec2f mult_v( Vec2f v2, float s ) { mult_v2f( v2, s ); }
-Vec3f mult_v( Vec3f v3, float s ) { mult_v3f( v3, s ); }
-Vec4f mult_v( Vec4f v4, float s ) { mult_v4f( v4, s ); }
+//Vec2f mult_v( Vec2f v2, float s ) { mult_v2f( v2, s ); }
+Vec2f operator*( Vec2f lhs, float rhs ) { return mult_v2f( lhs, rhs ); }
+//Vec3f mult_v( Vec3f v3, float s ) { mult_v3f( v3, s ); }
+Vec3f operator*( Vec3f lhs, float rhs ) { return mult_v3f( lhs, rhs ); }
+//Vec4f mult_v( Vec4f v4, float s ) { mult_v4f( v4, s ); }
+Vec4f operator*( Vec4f lhs, float rhs ) { return mult_v4f( lhs, rhs ); }
 
-Vec2f add_v( Vec2f lhs, Vec2f rhs ) { add_v2f(lhs, rhs); }
-Vec3f add_v( Vec3f lhs, Vec3f rhs ) { add_v3f(lhs, rhs); }
-Vec4f add_v( Vec4f lhs, Vec4f rhs ) { add_v4f(lhs, rhs); }
+//Vec2f add_v( Vec2f lhs, Vec2f rhs ) { add_v2f(lhs, rhs); }
+Vec2f operator+( Vec2f lhs, const Vec2f& rhs ) { return add_v2f(lhs, rhs); }
+//Vec3f add_v( Vec3f lhs, Vec3f rhs ) { add_v3f(lhs, rhs); }
+Vec3f operator+( Vec3f lhs, const Vec3f& rhs ) { return add_v3f(lhs, rhs); }
+//Vec4f add_v( Vec4f lhs, Vec4f rhs ) { add_v4f(lhs, rhs); }
+Vec4f operator+( Vec4f lhs, const Vec4f& rhs ) { return add_v4f(lhs, rhs); }
 
-Vec2f sub_v( Vec2f lhs, Vec2f rhs ) { sub_v2f(lhs, rhs); }
-Vec3f sub_v( Vec3f lhs, Vec3f rhs ) { sub_v3f(lhs, rhs); }
-Vec4f sub_v( Vec4f lhs, Vec4f rhs ) { sub_v4f(lhs, rhs); }
+//Vec2f sub_v( Vec2f lhs, Vec2f rhs ) { sub_v2f(lhs, rhs); }
+Vec2f operator-( Vec2f lhs, const Vec2f& rhs ) { return sub_v2f(lhs, rhs); }
+//Vec3f sub_v( Vec3f lhs, Vec3f rhs ) { sub_v3f(lhs, rhs); }
+Vec3f operator-( Vec3f lhs, const Vec3f& rhs ) { return sub_v3f(lhs, rhs); }
+//Vec4f sub_v( Vec4f lhs, Vec4f rhs ) { sub_v4f(lhs, rhs); }
+Vec4f operator-( Vec4f lhs, const Vec4f& rhs ) { return sub_v4f(lhs, rhs); }
 
 float dot_v( Vec2f lhs, Vec2f rhs ) { dot_v2f(lhs, rhs); }
 float dot_v( Vec3f lhs, Vec3f rhs ) { dot_v3f(lhs, rhs); }
@@ -54,7 +63,7 @@ float dot_v( Vec4f lhs, Vec4f rhs ) { dot_v4f(lhs, rhs); }
 #include "PhysicsTypes.inl"
 
 #define MULT_MAT_CPP( X, Y, Z )  \
-    Mat##X##x##Z mult_m( Mat##X##x##Y lhs, Mat##Y##x##Z rhs )  \
+    Mat##X##x##Z operator*( Mat##X##x##Y lhs, const Mat##Y##x##Z& rhs )  \
     { \
         mult_##X##x##Y##_##Y##x##Z( lhs, rhs ); \
     }
@@ -72,7 +81,7 @@ float dot_v( Vec4f lhs, Vec4f rhs ) { dot_v4f(lhs, rhs); }
 #include "PhysicsTypes.inl"
 
 #define MULT_SCALAR_CPP( X, Y ) \
-    Mat##X##x##Y mult_ms( Mat##X##x##Y m, float s ) \
+    Mat##X##x##Y operator*( Mat##X##x##Y m, const float s ) \
     { \
         return mult_##X##x##Y( m, s ); \
     }
@@ -81,7 +90,7 @@ float dot_v( Vec4f lhs, Vec4f rhs ) { dot_v4f(lhs, rhs); }
 #include "PhysicsTypes.inl"
 
 #define ADD_MAT_CPP( X, Y ) \
-    Mat##X##x##Y add_m( Mat##X##x##Y lhs, Mat##X##x##Y rhs ) \
+    Mat##X##x##Y operator+( Mat##X##x##Y lhs, const Mat##X##x##Y& rhs ) \
     { \
         return add_##X##x##Y( lhs, rhs ); \
     }
@@ -90,7 +99,7 @@ float dot_v( Vec4f lhs, Vec4f rhs ) { dot_v4f(lhs, rhs); }
 #include "PhysicsTypes.inl"
 
 #define EQUALS_M_CPP( X, Y ) \
-    bool equals_##X##x##Y( Mat##X##x##Y a, Mat##X##x##Y b ) \
+    bool operator==( const Mat##X##x##Y& a, const Mat##X##x##Y& b ) \
     { \
         return equals_##X##x##Y( a, b ); \
     }
@@ -107,7 +116,7 @@ Mat3x3 inverse_m( Mat3x3 m ) { inverse_3x3( m ); }
 Mat4x4 inverse_m( Mat4x4 m ) { inverse_4x4( m ); }
 
 #define MULT_MAT_VEC_CPP( X, Y )                                   \
-    Vec##X##f mult_mv( Mat##X##x##Y m, Vec##Y##f v ) \
+    Vec##X##f operator*( Mat##X##x##Y m, const Vec##Y##f& v ) \
     { \
         return mult_##X##x##Y##v( m, v ); \
     }
