@@ -123,7 +123,12 @@ endif( MSVC )
 
 ##########################################################################
 
-# Engine executable
+option(CREATE_PHYS_LIB "Create library and not tests" OFF)
+
+if( NOT CREATE_PHYS_LIB )
+
+# run tests
+
 if( MSVC )
     add_executable( run_tests ${SOURCES} ${HEADERS} )
 else()
@@ -131,6 +136,10 @@ else()
 endif( MSVC )
 
 target_include_directories( run_tests PRIVATE "${PROJECT_SOURCE_DIR}" )
+
+if( NOT MSVC )
+target_link_libraries( run_tests PRIVATE "-lm")
+endif( NOT MSVC )
 
 # vectorization diagnostics
 if( CMAKE_CXX_COMPILER_ID MATCHES "Clang" )
@@ -152,9 +161,25 @@ elseif( CMAKE_CXX_COMPILER_ID MATCHES "MSVC" )
 	)
 endif( CMAKE_CXX_COMPILER_ID MATCHES "Clang" )
 
-if( NOT MSVC )
-target_link_libraries( run_tests PRIVATE "-lm")
-endif( NOT MSVC )
+else()
+
+# create library
+
+add_library( physics_lib ${SOURCES} )
+
+# vectorization diagnostics
+if( CMAKE_CXX_COMPILER_ID MATCHES "Clang" )
+	target_compile_options( physics_lib PRIVATE -Rpass=loop-vectorize )
+elseif( CMAKE_CXX_COMPILER_ID MATCHES "GNU" )
+	target_compile_options( physics_lib PRIVATE
+		-ftree-vectorize
+		-fopt-info-vec-optimized
+	)
+elseif( CMAKE_CXX_COMPILER_ID MATCHES "MSVC" )
+	target_compile_options( physics_lib PRIVATE "/Qvec-report:1" )
+endif( CMAKE_CXX_COMPILER_ID MATCHES "Clang" )
+
+endif( NOT CREATE_PHYS_LIB )
 
 ###########################################################################
 
