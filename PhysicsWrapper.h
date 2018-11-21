@@ -61,3 +61,56 @@ float dot_v( Vec4f lhs, Vec4f rhs ) { dot_v4f(lhs, rhs); }
 
 #define MAT_OP_TYPES( X, Y, Z ) MULT_MAT_CPP( X, Y, Z )
 #include "PhysicsTypes.inl"
+
+#define MULT_TRANSP_CPP( X, Y ) \
+    Mat##Y##x##X transpose_m( Mat##X##x##Y m ) \
+    { \
+        return transpose_##X##x##Y( m ); \
+    }
+
+#define MAT_TYPES( X, Y ) MULT_TRANSP_CPP( X, Y )
+#include "PhysicsTypes.inl"
+
+#define MULT_SCALAR_CPP( X, Y ) \
+    Mat##X##x##Y mult_ms( Mat##X##x##Y m, float s ) \
+    { \
+        return mult_##X##x##Y( m, s ); \
+    }
+
+#define MAT_TYPES( X, Y ) MULT_SCALAR_CPP( X, Y )
+#include "PhysicsTypes.inl"
+
+#define ADD_MAT_CPP( X, Y ) \
+    Mat##X##x##Y add_m( Mat##X##x##Y lhs, Mat##X##x##Y rhs ) \
+    { \
+        return add_##X##x##Y( lhs, rhs ); \
+    }
+
+#define MAT_TYPES( X, Y ) ADD_MAT_CPP( X, Y )
+#include "PhysicsTypes.inl"
+
+#define EQUALS_M_CPP( X, Y ) \
+    bool equals_##X##x##Y( Mat##X##x##Y a, Mat##X##x##Y b ) \
+    { \
+        return equals_##X##x##Y( a, b ); \
+    }
+
+#define MAT_TYPES( X, Y ) EQUALS_M_CPP( X, Y )
+#include "PhysicsTypes.inl"
+
+float determinant_m( Mat2x2 m ) { determinant_2x2( m ); }
+float determinant_m( Mat3x3 m ) { determinant_3x3( m ); }
+float determinant_m( Mat4x4 m ) { determinant_4x4( m ); }
+
+Mat2x2 inverse_m( Mat2x2 m ) { inverse_2x2( m ); }
+Mat3x3 inverse_m( Mat3x3 m ) { inverse_3x3( m ); }
+Mat4x4 inverse_m( Mat4x4 m ) { inverse_4x4( m ); }
+
+#define MULT_MAT_VEC_CPP( X, Y )                                   \
+    Vec##X##f mult_mv( Mat##X##x##Y m, Vec##Y##f v ) \
+    { \
+        return mult_##X##x##Y##v( m, v ); \
+    }
+
+#define MAT_TYPES( X, Y ) MULT_MAT_VEC_CPP( X, Y )
+#include "PhysicsTypes.inl"
