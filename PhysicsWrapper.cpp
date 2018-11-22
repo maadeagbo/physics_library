@@ -4,9 +4,18 @@ DebugStr stringify_v( Vec2f v2 ) { return stringify_v2f( v2 ); }
 DebugStr stringify_v( Vec3f v3 ) { return stringify_v3f( v3 ); }
 DebugStr stringify_v( Vec4f v4 ) { return stringify_v4f( v4 ); }
 
-bool operator==( const Vec2f& lhs, const Vec2f& rhs ) { return equals_v2f( lhs, rhs ); }
-bool operator==( const Vec3f& lhs, const Vec3f& rhs ) { return equals_v3f( lhs, rhs ); }
-bool operator==( const Vec4f& lhs, const Vec4f& rhs ) { return equals_v4f( lhs, rhs ); }
+bool operator==( const Vec2f& lhs, const Vec2f& rhs )
+{
+    return equals_v2f( lhs, rhs );
+}
+bool operator==( const Vec3f& lhs, const Vec3f& rhs )
+{
+    return equals_v3f( lhs, rhs );
+}
+bool operator==( const Vec4f& lhs, const Vec4f& rhs )
+{
+    return equals_v4f( lhs, rhs );
+}
 
 float magnitude_v( Vec2f v2f ) { return magnitude_v2f( v2f ); }
 float magnitude_v( Vec3f v3f ) { return magnitude_v3f( v3f ); }
@@ -41,7 +50,7 @@ float dot_v( Vec4f lhs, Vec4f rhs ) { return dot_v4f( lhs, rhs ); }
 #define MULT_MAT_CPP( X, Y, Z )                                         \
     Mat##X##x##Z operator*( Mat##X##x##Y lhs, const Mat##Y##x##Z& rhs ) \
     {                                                                   \
-        return mult_##X##x##Y##_##Y##x##Z( lhs, rhs );                         \
+        return mult_##X##x##Y##_##Y##x##Z( lhs, rhs );                  \
     }
 
 #define MAT_OP_TYPES( X, Y, Z ) MULT_MAT_CPP( X, Y, Z )
