@@ -1,4 +1,5 @@
 #include "PhysicsStructs.h"
+#include "PhysicsInterface.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -27,6 +28,25 @@ struct DebugStr stringify_v4f( struct Vec4f v4 )
               v4.y,
               v4.z,
               v4.w );
+    return out;
+}
+
+struct DebugStr stringify_quat( struct Quat q )
+{
+    struct DebugStr out;
+
+    struct Vec3f euler = quat_to_euler( q );
+    snprintf(
+        out.buffer,
+        256,
+        "<Quat> i:%.8f, j:%.8f, k:%.8f, real:%.8f (euler: %.3f, %.3f, %.3f)",
+        q.i,
+        q.j,
+        q.k,
+        q.real,
+        rad_to_deg( euler.x ),
+        rad_to_deg( euler.y ),
+        rad_to_deg( euler.z ) );
     return out;
 }
 

@@ -317,14 +317,47 @@ int main( int argc, char const* argv[] )
 
     {
         struct Quat q = quat_from_euler( deg_to_rad( -90.f ), 0.f, 0.f );
+        q = mult_q( q, q );
         struct Vec3f v = {.z = 1.f};
 
-        printf( "\nRotating a vecter pointing in the Z-dir by 90 deg:: %s\n",
+        printf( "\nRotating vector \n%s\nby\n%s\n::\n%s\n",
+                stringify_v3f( v ).buffer,
+                stringify_quat( q ).buffer,
                 stringify_v3f( mult_qv( q, v ) ).buffer );
+    }
 
-        v = quat_to_euler( q );
+    {
+        struct Quat q1 = quat_from_euler( deg_to_rad( -90.f ), 0.f, 0.f );
+        struct Quat q2 = quat_from_euler( 0.f, deg_to_rad( -30.f ), 0.f );
+        struct Quat q = mult_q( q1, q2 );
 
-        printf( "%s\n", stringify_v3f( v ).buffer );
+        printf( "\nRotating \n%s\nby\n%s\n::\n%s\n",
+                stringify_quat( q1 ).buffer,
+                stringify_quat( q2 ).buffer,
+                stringify_quat( q ).buffer );
+    }
+
+    {
+        struct Quat q2 = quat_from_euler( deg_to_rad( -90.f ), 0.f, 0.f );
+        struct Quat q1 = quat_from_euler( 0.f, deg_to_rad( -30.f ), 0.f );
+        struct Quat q = mult_q( q1, q2 );
+
+        printf( "\nRotating \n%s\nby\n%s\n::\n%s\n",
+                stringify_quat( q1 ).buffer,
+                stringify_quat( q2 ).buffer,
+                stringify_quat( q ).buffer );
+    }
+
+    {
+        struct Quat q1 =
+            quat_from_euler( 0.f, deg_to_rad( 15.f ), deg_to_rad( -50.f ) );
+        struct Quat q2 = quat_from_euler( 0.f, deg_to_rad( -30.f ), 0.f );
+        struct Quat q = mult_q( q1, q2 );
+
+        printf( "\nRotating \n%s\nby\n%s\n::\n%s\n",
+                stringify_quat( q1 ).buffer,
+                stringify_quat( q2 ).buffer,
+                stringify_quat( q ).buffer );
     }
 
     return 0;

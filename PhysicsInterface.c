@@ -367,17 +367,17 @@ struct Mat4x4 quat_to_mat( struct Quat q )
     float qy2 = q.y * q.y;
     float qz2 = q.z * q.z;
 
-    return ( struct Mat4x4 ){.data = {{1.f - 2.f * (qy2 + qz2),
+    return ( struct Mat4x4 ){.data = {{1.f - 2.f * ( qy2 + qz2 ),
                                        2.f * ( q.x * q.y + q.w * q.z ),
                                        2.f * ( q.x * q.z - q.w * q.y ),
                                        0.f},
                                       {2.f * ( q.x * q.y - q.w * q.z ),
-                                       1.f - 2.f * (qx2 + qz2),
+                                       1.f - 2.f * ( qx2 + qz2 ),
                                        2.f * ( q.w * q.x + q.y * q.z ),
                                        0.f},
                                       {2.f * ( q.w * q.y + q.x * q.z ),
                                        2.f * ( q.y * q.z - q.w * q.x ),
-                                       1.f - 2.f * (qx2 + qy2),
+                                       1.f - 2.f * ( qx2 + qy2 ),
                                        0.f},
                                       {0.f, 0.f, 0.f, 1.f}}};
 }
@@ -387,10 +387,13 @@ struct Mat4x4 quat_to_mat( struct Quat q )
 
 struct Quat mult_q( struct Quat lhs, struct Quat rhs )
 {
+    // this->x = p.w * q.x + p.x * q.w + p.y * q.z - p.z * q.y;
+    // this->y = p.w * q.y + p.y * q.w + p.z * q.x - p.x * q.z;
+    // this->z = p.w * q.z + p.z * q.w + p.x * q.y - p.y * q.x;
     struct Quat q = {
         .x = lhs.w * rhs.x + lhs.x * rhs.w + lhs.y * rhs.z - lhs.z * rhs.y,
-        .y = lhs.w * rhs.y + lhs.x * rhs.z + lhs.y * rhs.w - lhs.z * rhs.x,
-        .z = lhs.w * rhs.z + lhs.x * rhs.y + lhs.y * rhs.x - lhs.z * rhs.w,
+        .y = lhs.w * rhs.y + lhs.y * rhs.w + lhs.z * rhs.x - lhs.x * rhs.z,
+        .z = lhs.w * rhs.z + lhs.z * rhs.w + lhs.x * rhs.y - lhs.y * rhs.x,
         .w = lhs.w * rhs.w - lhs.x * rhs.x - lhs.y * rhs.y - lhs.z * rhs.z,
     };
 
@@ -878,7 +881,7 @@ struct Mat4x4 translate_4x4( struct Mat4x4 m, struct Vec3f v )
 
 struct Mat4x4 scale_4x4( struct Mat4x4 m, struct Vec3f v )
 {
-	return ( struct Mat4x4 ){{
+    return ( struct Mat4x4 ){{
         {m.data[0][0] * v.x, m.data[0][1], m.data[0][2], m.data[0][3]},
         {m.data[1][0], m.data[1][1] * v.y, m.data[1][2], m.data[1][3]},
         {m.data[2][0], m.data[2][1], m.data[2][2] * v.z, m.data[2][3]},
@@ -891,7 +894,7 @@ struct Mat4x4 scale_4x4( struct Mat4x4 m, struct Vec3f v )
 
 struct Mat3x3 extract_3x3( struct Mat4x4 m )
 {
-	return ( struct Mat3x3 ){{
+    return ( struct Mat3x3 ){{
         {m.data[0][0], m.data[0][1], m.data[0][2]},
         {m.data[1][0], m.data[1][1], m.data[1][2]},
         {m.data[2][0], m.data[2][1], m.data[2][2]},

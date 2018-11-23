@@ -72,6 +72,8 @@ struct Quat
     };
 };
 
+struct DebugStr stringify_quat( struct Quat q );
+
 struct DebugStr stringify_v2f( struct Vec2f v2 );
 struct DebugStr stringify_v3f( struct Vec3f v3 );
 struct DebugStr stringify_v4f( struct Vec4f v4 );
