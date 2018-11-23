@@ -96,6 +96,12 @@ struct Mat4x4 inverse_4x4( struct Mat4x4 m );
 #define MAT_TYPES( X, Y ) MULT_MAT_VEC( X, Y )
 #include "PhysicsTypes.inl"
 
+struct Mat4x4 translate_4x4( struct Mat4x4 m, struct Vec3f v );
+
+struct Mat4x4 scale_4x4( struct Mat4x4 m, struct Vec3f v );
+
+struct Mat3x3 extract_3x3( struct Mat4x4 m );
+
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 
@@ -122,7 +128,7 @@ float dot_q( struct Quat q1, struct Quat q2 );
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 
-#if _MSC_VER && !__INTEL_COMPILER
+#if !_MSC_VER && !__INTEL_COMPILER
 
 // clang-format off
 

@@ -108,3 +108,11 @@ Mat4x4 inverse_m( Mat4x4 m ) { return inverse_4x4( m ); }
 
 #define MAT_TYPES( X, Y ) MULT_MAT_VEC_CPP( X, Y )
 #include "PhysicsTypes.inl"
+
+Mat4x4 translate_mat( Mat4x4 m, Vec3f v ) { return translate_4x4( m, v ); }
+
+Mat4x4 scale_mat( Mat4x4 m, Vec3f v ) { return scale_4x4( m, v ); }
+
+Quat operator*( Quat lhs, Quat rhs ) { return mult_q( lhs, rhs ); }
+
+Vec3f operator*( Quat q, Vec3f v ) { return mult_qv( q, v ); }

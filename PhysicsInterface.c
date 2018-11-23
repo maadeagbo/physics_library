@@ -1,25 +1,27 @@
 #include "PhysicsInterface.h"
-#include <math.h>
 #include <immintrin.h>
 
 #define UNUSED_VAR( X ) (void)X
 
 #ifdef _WIN32
+#define _USE_MATH_DEFINES
+#include <math.h>
 #include <float.h>
 
 #define EPSILON_F FLT_EPSILON
 #else
+#include <math.h>
 #define EPSILON_F __FLT_EPSILON__
 #endif  // _WIN32
 
 float deg_to_rad( float deg )
 {
-    return deg * 0.01745329251994329576923690768489;
+    return deg * (float)0.01745329251994329576923690768489;
 }
 
 float rad_to_deg( float rad )
 {
-    return rad * 57.295779513082320876798154814105;
+    return rad * (float)57.295779513082320876798154814105;
 }
 
 //-----------------------------------------------------------------------------
@@ -364,19 +366,18 @@ struct Mat4x4 quat_to_mat( struct Quat q )
     float qx2 = q.x * q.x;
     float qy2 = q.y * q.y;
     float qz2 = q.z * q.z;
-    float qw2 = q.w * q.w;
 
-    return ( struct Mat4x4 ){.data = {{qw2 + qx2 - qy2 - qz2,
+    return ( struct Mat4x4 ){.data = {{1.f - 2.f * (qy2 + qz2),
                                        2.f * ( q.x * q.y + q.w * q.z ),
                                        2.f * ( q.x * q.z - q.w * q.y ),
                                        0.f},
                                       {2.f * ( q.x * q.y - q.w * q.z ),
-                                       qw2 - qx2 + qy2 - qz2,
+                                       1.f - 2.f * (qx2 + qz2),
                                        2.f * ( q.w * q.x + q.y * q.z ),
                                        0.f},
                                       {2.f * ( q.w * q.y + q.x * q.z ),
                                        2.f * ( q.y * q.z - q.w * q.x ),
-                                       qw2 - qx2 - qy2 + qz2,
+                                       1.f - 2.f * (qx2 + qy2),
                                        0.f},
                                       {0.f, 0.f, 0.f, 1.f}}};
 }
@@ -855,3 +856,44 @@ static void add_mat_impl( float output[],
 
 #define MAT_TYPES( X, Y ) MULT_MAT_VEC_IMPL( X, Y )
 #include "PhysicsTypes.inl"
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+struct Mat4x4 translate_4x4( struct Mat4x4 m, struct Vec3f v )
+{
+    return ( struct Mat4x4 ){{
+        {m.data[0][0], m.data[0][1], m.data[0][2], m.data[0][3]},
+        {m.data[1][0], m.data[1][1], m.data[1][2], m.data[1][3]},
+        {m.data[2][0], m.data[2][1], m.data[2][2], m.data[2][3]},
+        {m.data[3][0] + v.x,
+         m.data[3][1] + v.y,
+         m.data[3][2] + v.z,
+         m.data[3][3]},
+    }};
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+struct Mat4x4 scale_4x4( struct Mat4x4 m, struct Vec3f v )
+{
+	return ( struct Mat4x4 ){{
+        {m.data[0][0] * v.x, m.data[0][1], m.data[0][2], m.data[0][3]},
+        {m.data[1][0], m.data[1][1] * v.y, m.data[1][2], m.data[1][3]},
+        {m.data[2][0], m.data[2][1], m.data[2][2] * v.z, m.data[2][3]},
+        {m.data[3][0], m.data[3][1], m.data[3][2], m.data[3][3]},
+    }};
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+struct Mat3x3 extract_3x3( struct Mat4x4 m )
+{
+	return ( struct Mat3x3 ){{
+        {m.data[0][0], m.data[0][1], m.data[0][2]},
+        {m.data[1][0], m.data[1][1], m.data[1][2]},
+        {m.data[2][0], m.data[2][1], m.data[2][2]},
+    }};
+}
