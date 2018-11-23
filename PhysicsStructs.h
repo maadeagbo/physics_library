@@ -96,20 +96,20 @@ struct DebugStr stringify_v4f( struct Vec4f v4 );
 
 // clang-format off
 
-#define stringify(X) _Generic((X),	\
-struct Mat2x2   : stringify_m2x2,   \
-struct Mat2x3   : stringify_m2x3,   \
-struct Mat2x4   : stringify_m2x4,   \
-struct Mat3x2   : stringify_m3x2,   \
-struct Mat3x3   : stringify_m3x3,   \
-struct Mat3x4   : stringify_m3x4,   \
-struct Mat4x2   : stringify_m4x2,   \
-struct Mat4x3   : stringify_m4x3,   \
-struct Mat4x4   : stringify_m4x4,   \
-struct Vec2f    : stringify_v2f,    \
-struct Vec3f    : stringify_v3f,    \
-default         : stringify_v4f     \
-)(X)
+// #define stringify(X) _Generic((X),	\
+// struct Mat2x2   : stringify_m2x2,   \
+// struct Mat2x3   : stringify_m2x3,   \
+// struct Mat2x4   : stringify_m2x4,   \
+// struct Mat3x2   : stringify_m3x2,   \
+// struct Mat3x3   : stringify_m3x3,   \
+// struct Mat3x4   : stringify_m3x4,   \
+// struct Mat4x2   : stringify_m4x2,   \
+// struct Mat4x3   : stringify_m4x3,   \
+// struct Mat4x4   : stringify_m4x4,   \
+// struct Vec2f    : stringify_v2f,    \
+// struct Vec3f    : stringify_v3f,    \
+// default         : stringify_v4f     \
+// )(X)
 
 // clang-format on
 
