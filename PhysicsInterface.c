@@ -900,3 +900,37 @@ struct Mat3x3 extract_3x3( struct Mat4x4 m )
         {m.data[2][0], m.data[2][1], m.data[2][2]},
     }};
 }
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+struct Mat4x4 perspective_right_reverse_z( float fovy, float scr_width, float scr_height, float near, float far )
+{
+    struct Mat4x4 output = ident_m4x4();
+
+    float half_fov = fovy / 2.f; 
+    float yscale = cosf( half_fov ) / sin( half_fov );
+
+    output.data[0][0] = yscale * ( scr_width / scr_height );
+    output.data[1][1] = yscale;
+    output.data[2][2] = -far / ( near - far ) - 1.f;
+    output.data[2][3] = -(far * near) / ( near - far );
+    output.data[3][2] = -1.f;
+
+    return output;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+struct Mat4x4 view_matrix(  struct Vec3f cam_pos, struct Vec3f cam_up, struct Vec3f cam_forward )
+{
+    struct Vec3f right = cross_v3f( cam_forward, cam_up );
+
+    return (struct Mat4x4){{
+        { right.x, right.y, right.z, 0.f },
+        { cam_up.x, cam_up.y, cam_up.z, 0.f },
+        { cam_forward.x, cam_forward.y, cam_forward.z, 0.f },
+        { cam_pos.x, cam_pos.y, cam_pos.z, 1.f }
+    }};
+}
