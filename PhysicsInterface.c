@@ -904,17 +904,18 @@ struct Mat3x3 extract_3x3( struct Mat4x4 m )
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 
-struct Mat4x4 perspective_right_reverse_z( float fovy, float scr_width, float scr_height, float near, float far )
+struct Mat4x4 perspective_right_reverse_z(
+    float fovy, float scr_width, float scr_height, float near, float far )
 {
     struct Mat4x4 output = ident_m4x4();
 
-    float half_fov = fovy / 2.f; 
+    float half_fov = fovy / 2.f;
     float yscale = cosf( half_fov ) / sin( half_fov );
 
     output.data[0][0] = yscale * ( scr_height / scr_width );
     output.data[1][1] = yscale;
     output.data[2][2] = -far / ( near - far ) - 1.f;
-    output.data[3][2] = -(far * near) / ( near - far );
+    output.data[3][2] = -( far * near ) / ( near - far );
     output.data[2][3] = -1.f;
 
     return output;
@@ -923,15 +924,18 @@ struct Mat4x4 perspective_right_reverse_z( float fovy, float scr_width, float sc
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 
-struct Mat4x4 view_matrix(  struct Vec3f cam_pos, struct Vec3f wld_up, struct Vec3f cam_forward )
+struct Mat4x4 view_right_matrix( struct Vec3f cam_pos,
+                                 struct Vec3f wld_up,
+                                 struct Vec3f cam_forward )
 {
     struct Vec3f right = cross_v3f( cam_forward, wld_up );
     struct Vec3f cam_up = cross_v3f( right, cam_forward );
 
-    return (struct Mat4x4){{
-        { right.x, cam_up.x, cam_forward.x, 0.f },
-        { right.y, cam_up.y, cam_forward.y, 0.f },
-        { right.z, cam_up.z, cam_forward.z, 0.f },
-        { -dot_v3f( right, cam_pos), -dot_v3f( cam_up, cam_pos), dot_v3f( cam_forward, cam_pos), 1.f }
-    }};
+    return ( struct Mat4x4 ){{{right.x, cam_up.x, -cam_forward.x, 0.f},
+                              {right.y, cam_up.y, -cam_forward.y, 0.f},
+                              {right.z, cam_up.z, -cam_forward.z, 0.f},
+                              {-dot_v3f( right, cam_pos ),
+                               -dot_v3f( cam_up, cam_pos ),
+                               dot_v3f( cam_forward, cam_pos ),
+                               1.f}}};
 }
