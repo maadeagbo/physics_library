@@ -928,9 +928,9 @@ struct Mat4x4 view_matrix(  struct Vec3f cam_pos, struct Vec3f cam_up, struct Ve
     struct Vec3f right = cross_v3f( cam_forward, cam_up );
 
     return (struct Mat4x4){{
-        { right.x, right.y, right.z, 0.f },
-        { cam_up.x, cam_up.y, cam_up.z, 0.f },
-        { cam_forward.x, cam_forward.y, cam_forward.z, 0.f },
-        { cam_pos.x, cam_pos.y, cam_pos.z, 1.f }
+        { right.x, cam_up.x, cam_forward.x, 0.f },
+        { right.y, cam_up.y, cam_forward.y, 0.f },
+        { right.z, cam_up.z, cam_forward.z, 0.f },
+        { -dot_v3f( right, cam_pos), -dot_v3f( cam_up, cam_pos), dot_v3f( cam_forward, cam_pos), 1.f }
     }};
 }
