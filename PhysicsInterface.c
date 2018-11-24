@@ -910,13 +910,14 @@ struct Mat4x4 perspective_right_reverse_z(
     struct Mat4x4 output = ident_m4x4();
 
     float half_fov = fovy / 2.f;
-    float yscale = cosf( half_fov ) / sin( half_fov );
+    float yscale = cosf( half_fov ) / sinf( half_fov );
 
     output.data[0][0] = yscale * ( scr_height / scr_width );
     output.data[1][1] = yscale;
     output.data[2][2] = -far / ( near - far ) - 1.f;
     output.data[3][2] = -( far * near ) / ( near - far );
     output.data[2][3] = -1.f;
+    output.data[3][3] = 0.f;
 
     return output;
 }

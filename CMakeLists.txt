@@ -114,7 +114,6 @@ set( HEADERS
 set( SOURCES
 	"${PROJECT_SOURCE_DIR}/PhysicsStructs.c"
 	"${PROJECT_SOURCE_DIR}/PhysicsInterface.c"
-	"${PROJECT_SOURCE_DIR}/tests.c"
 )
 
 if( MSVC )
@@ -128,11 +127,12 @@ option(CREATE_PHYS_LIB "Create library and not tests" OFF)
 if( NOT CREATE_PHYS_LIB )
 
 # run tests
+message( "\n--> Compiling physics library tests <--\n" )
 
 if( MSVC )
-    add_executable( run_tests ${SOURCES} ${HEADERS} )
+    add_executable( run_tests "${PROJECT_SOURCE_DIR}/tests.c" ${SOURCES} ${HEADERS} )
 else()
-    add_executable( run_tests ${SOURCES} )
+    add_executable( run_tests "${PROJECT_SOURCE_DIR}/tests.c" ${SOURCES} )
 endif( MSVC )
 
 target_include_directories( run_tests PRIVATE "${PROJECT_SOURCE_DIR}" )
@@ -161,11 +161,17 @@ elseif( CMAKE_CXX_COMPILER_ID MATCHES "MSVC" )
 	)
 endif( CMAKE_CXX_COMPILER_ID MATCHES "Clang" )
 
+# set visual studio startup project
+set_property(DIRECTORY ${PROJECT_SOURCE_DIR}
+			PROPERTY VS_STARTUP_PROJECT
+			run_tests )
+
 else()
 
 # create library
+message( "\n--> Compiling physics library <--\n" )
 
-add_library( physics_lib ${SOURCES} )
+add_library( physics_lib STATIC ${SOURCES} )
 
 # vectorization diagnostics
 if( CMAKE_CXX_COMPILER_ID MATCHES "Clang" )
@@ -179,14 +185,12 @@ elseif( CMAKE_CXX_COMPILER_ID MATCHES "MSVC" )
 	target_compile_options( physics_lib PRIVATE "/Qvec-report:1" )
 endif( CMAKE_CXX_COMPILER_ID MATCHES "Clang" )
 
-endif( NOT CREATE_PHYS_LIB )
-
-###########################################################################
-
 # set visual studio startup project
 set_property(DIRECTORY ${PROJECT_SOURCE_DIR}
 			PROPERTY VS_STARTUP_PROJECT
-			run_tests )
+			physics_lib )
+
+endif( NOT CREATE_PHYS_LIB )
 
 ###########################################################################
 

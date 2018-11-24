@@ -212,23 +212,24 @@ int main( int argc, char const* argv[] )
     fputs( "\nMatrix multiply\n\n", stdout );
 
     srand( (unsigned)time( 0 ) );
+    {
+        struct Mat3x4 m34 = {0.f};
+        struct Mat4x2 m42 = {0.f};
 
-    struct Mat3x4 m34 = {0.f};
-    struct Mat4x2 m42 = {0.f};
+        for( uint32_t i = 0; i < 4; i++ )
+            for( uint32_t j = 0; j < 3; j++ )
+                m34.data[i][j] = (float)rand() / (float)RAND_MAX;
 
-    for( uint32_t i = 0; i < 4; i++ )
-        for( uint32_t j = 0; j < 3; j++ )
-            m34.data[i][j] = (float)rand() / (float)RAND_MAX;
+        for( uint32_t i = 0; i < 4; i++ )
+            for( uint32_t j = 0; j < 2; j++ )
+                m42.data[j][i] = (float)rand() / (float)RAND_MAX;
 
-    for( uint32_t i = 0; i < 4; i++ )
-        for( uint32_t j = 0; j < 2; j++ )
-            m42.data[j][i] = (float)rand() / (float)RAND_MAX;
+        printf( "-- Matrix A:: %s\n", stringify_m3x4( m34 ).buffer );
+        printf( "-- Matrix B:: %s\n", stringify_m4x2( m42 ).buffer );
 
-    printf( "-- Matrix A:: %s\n", stringify_m3x4( m34 ).buffer );
-    printf( "-- Matrix B:: %s\n", stringify_m4x2( m42 ).buffer );
-
-    printf( "-- Multiplication Result\n%s\n",
-            stringify_m3x2( mult_3x4_4x2( m34, m42 ) ).buffer );
+        printf( "-- Multiplication Result\n%s\n",
+                stringify_m3x2( mult_3x4_4x2( m34, m42 ) ).buffer );
+    }
 
     fputs( "\nMatrix inversion & determinant\n", stdout );
 
