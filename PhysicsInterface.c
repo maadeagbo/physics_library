@@ -923,9 +923,10 @@ struct Mat4x4 perspective_right_reverse_z( float fovy, float scr_width, float sc
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 
-struct Mat4x4 view_matrix(  struct Vec3f cam_pos, struct Vec3f cam_up, struct Vec3f cam_forward )
+struct Mat4x4 view_matrix(  struct Vec3f cam_pos, struct Vec3f wld_up, struct Vec3f cam_forward )
 {
-    struct Vec3f right = cross_v3f( cam_forward, cam_up );
+    struct Vec3f right = cross_v3f( cam_forward, wld_up );
+    struct Vec3f cam_up = cross_v3f( right, cam_forward );
 
     return (struct Mat4x4){{
         { right.x, cam_up.x, cam_forward.x, 0.f },

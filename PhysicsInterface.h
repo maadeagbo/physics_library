@@ -130,4 +130,4 @@ struct Mat3x3 extract_3x3( struct Mat4x4 m );
 
 struct Mat4x4 perspective_right_reverse_z( float fovy, float scr_width, float scr_height, float near, float far );
 
-struct Mat4x4 view_matrix(  struct Vec3f cam_pos, struct Vec3f cam_up, struct Vec3f cam_forward );
+struct Mat4x4 view_matrix(  struct Vec3f cam_pos, struct Vec3f wld_up, struct Vec3f cam_forward );
