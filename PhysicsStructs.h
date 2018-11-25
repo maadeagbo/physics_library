@@ -20,6 +20,9 @@
 #include <inttypes.h>
 #include "SimpleAssert.h"
 
+// TODO : Figure out how to simulate __attribute__ ((aligned (16))) or alignas
+//		  on MSVC compiler
+
 struct DebugStr
 {
     char buffer[256];
@@ -91,3 +94,27 @@ struct DebugStr stringify_v4f( struct Vec4f v4 );
     MAT_LAYOUT( X, Y );   \
     STRINGIFY_MAT( X, Y );
 #include "PhysicsTypes.inl"
+
+//-----------------------------------------------------------------------------
+
+struct Vec3u
+{
+    union {
+        struct
+        {
+            uint32_t x, y, z;
+        };
+        uint32_t data[3];
+    };
+};
+
+struct Vec4u
+{
+    union {
+        struct
+        {
+            uint32_t x, y, z, w;
+        };
+        uint32_t data[4];
+    };
+};

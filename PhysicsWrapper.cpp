@@ -116,3 +116,31 @@ Mat4x4 scale_mat( Mat4x4 m, Vec3f v ) { return scale_4x4( m, v ); }
 Quat operator*( Quat lhs, Quat rhs ) { return mult_q( lhs, rhs ); }
 
 Vec3f operator*( Quat q, Vec3f v ) { return mult_qv( q, v ); }
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+Vec2f new_v2f( float f1 ) { return {f1, f1}; }
+Vec2f new_v2f( Vec2f v ) { return {v.x, v.y}; }
+Vec2f new_v2f( Vec3f v ) { return {v.x, v.y}; }
+Vec2f new_v2f( Vec4f v ) { return {v.x, v.y}; }
+
+Vec3f new_v3f( float f1 ) { return {f1, f1, f1}; }
+Vec3f new_v3f( Vec2f v, float f1 ) { return {v.x, v.y, f1}; }
+Vec3f new_v3f( Vec3f v ) { return {v.x, v.y, v.z}; }
+Vec3f new_v3f( Vec4f v ) { return {v.x, v.y, v.z}; }
+
+Vec4f new_v4f( float f1 ) { return {f1, f1, f1, f1}; }
+Vec4f new_v4f( Vec2f v, float f1, float f2 ) { return {v.x, v.y, f1, f2}; }
+Vec4f new_v4f( Vec3f v, float f1 ) { return {v.x, v.y, v.z, f1}; }
+Vec4f new_v4f( Vec4f v ) { return {v.x, v.y, v.z, v.w}; }
+
+Vec4f new_v4f( Mat4x4 v, uint32_t column )
+{
+    assertf( column <= 3, "Invalid column index (%u) for Mat4x4\n", column );
+
+    return {v.data[column][0],
+            v.data[column][1],
+            v.data[column][2],
+            v.data[column][3]};
+}

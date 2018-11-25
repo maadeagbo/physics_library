@@ -12,6 +12,7 @@ extern "C"
 #ifdef __cplusplus
 }
 #endif
+#include <cmath>
 
 DebugStr stringify_v( Vec2f v2 );
 DebugStr stringify_v( Vec3f v3 );
@@ -100,3 +101,26 @@ Mat4x4 scale_mat( Mat4x4 m, Vec3f v );
 Quat operator*( Quat lhs, Quat rhs );
 
 Vec3f operator*( Quat q, Vec3f v );
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+Vec2f new_v2f( float f1 = 0.f );
+Vec2f new_v2f( Vec2f v );
+Vec2f new_v2f( Vec3f v );
+Vec2f new_v2f( Vec4f v );
+
+Vec3f new_v3f( float f1 = 0.f );
+Vec3f new_v3f( Vec2f v, float f1 = 0.f );
+Vec3f new_v3f( Vec3f v );
+Vec3f new_v3f( Vec4f v );
+
+Vec4f new_v4f( float f1 = 0.f );
+Vec4f new_v4f( Vec2f v, float f1 = 0.f, float f2 = 0.f );
+Vec4f new_v4f( Vec3f v, float f1 = 0.f );
+Vec4f new_v4f( Vec4f v );
+
+Vec4f new_v4f( Mat4x4 v, uint32_t column );
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
