@@ -411,10 +411,11 @@ struct Vec3f mult_qv( struct Quat q, struct Vec3f v )
 
     struct Vec3f q_vec = {.x = q.i, .y = q.j, .z = q.z};
 
-    struct Vec3f t_vec = cross_v3f( mult_v3f( q_vec, 2.f ), v );
+    struct Vec3f t_vec = cross_v3f( q_vec, v );
+    struct Vec3f t2_vec = cross_v3f( q_vec, t_vec );
 
-    return add_v3f( add_v3f( v, mult_v3f( t_vec, q.w ) ),
-                    cross_v3f( q_vec, t_vec ) );
+    return add_v3f(
+        v, mult_v3f( add_v3f( mult_v3f( t_vec, q.w ), t2_vec ), 2.f ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -907,6 +908,27 @@ struct Mat3x3 extract_3x3( struct Mat4x4 m )
 struct Mat4x4 perspective_right_reverse_z(
     float fovy, float scr_width, float scr_height, float near, float far )
 {
+    /*
+        float aspect = scr_width / scr_height;
+
+        assertf( aspect > 0.f, "Invalid aspect ratio: %.5f\n", aspect );
+
+        float tan_fov = tanf( fovy / 2.f );
+
+        output.data[0][0] = 1.f / ( aspect * tan_fov );
+        output.data[1][1] = 1.f / tan_fov;
+        output.data[2][2] = -( far + near ) / ( far - near );
+        output.data[2][3] = -1.f;
+        output.data[3][2] = -( 2.f * far * near ) / ( far - near );
+        output.data[3][3] = 0.f;
+
+        struct Mat4x4 reverse_mat = ident_m4x4();
+        reverse_mat.data[2][2] = -1.f;
+        reverse_mat.data[3][2] = 1.f;
+
+        return mult_4x4_4x4( reverse_mat, output );
+    */
+
     struct Mat4x4 output = ident_m4x4();
 
     float half_fov = fovy / 2.f;
@@ -929,7 +951,7 @@ struct Mat4x4 view_right_matrix( struct Vec3f cam_pos,
                                  struct Vec3f wld_up,
                                  struct Vec3f cam_forward )
 {
-    struct Vec3f right = cross_v3f( cam_forward, wld_up );
+    struct Vec3f right = normalize_v3f( cross_v3f( cam_forward, wld_up ) );
     struct Vec3f cam_up = cross_v3f( right, cam_forward );
 
     return ( struct Mat4x4 ){{{right.x, cam_up.x, -cam_forward.x, 0.f},
