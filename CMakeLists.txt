@@ -195,6 +195,8 @@ else()
 		"${PROJECT_SOURCE_DIR}/physics_library"
 	)
 
+	target_compile_definitions( physics_lib PRIVATE "_CRT_SECURE_NO_WARNINGS" )
+
 	# vectorization diagnostics
 	if( CMAKE_C_COMPILER_ID MATCHES "Clang" )
 		target_compile_options( physics_lib PRIVATE -Rpass=loop-vectorize )
