@@ -24,7 +24,7 @@
 
 #ifdef NDEBUG
 
-#define assertf()
+#define assertf( A, M, ... )
 
 #else
 
