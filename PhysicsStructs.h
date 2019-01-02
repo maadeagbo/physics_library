@@ -21,7 +21,7 @@
 #include "SimpleAssert.h"
 
 // TODO : Figure out how to simulate __attribute__ ((aligned (16))) or alignas
-//		  on MSVC compiler
+//		  on MSVC compiler ( in C )
 
 struct DebugStr
 {
@@ -95,7 +95,8 @@ struct DebugStr stringify_v4f( struct Vec4f v4 );
     STRINGIFY_MAT( X, Y );
 #include "PhysicsTypes.inl"
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 struct Vec3u
 {
@@ -117,4 +118,13 @@ struct Vec4u
         };
         uint32_t data[4];
     };
+};
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
+struct AABBox
+{
+	struct Vec3f min_corner;
+	struct Vec3f extents_xyz;
 };
