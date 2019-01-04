@@ -128,3 +128,16 @@ struct AABBox
 	struct Vec3f min_corner;
 	struct Vec3f extents_xyz;
 };
+
+struct OBBox
+{
+	struct Vec3f min_corner;
+	struct Vec3f axis_xyz[3];
+	struct Vec3f extents_xyz[3];
+};
+
+struct Sphere
+{
+	struct Vec3f center;
+	float radius;
+};

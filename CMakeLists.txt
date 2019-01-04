@@ -112,11 +112,15 @@ if( NOT CREATE_PHYS_LIB )
 		"${PROJECT_SOURCE_DIR}/PhysicsStructs.h"
 		"${PROJECT_SOURCE_DIR}/PhysicsInterface.h"
 		"${PROJECT_SOURCE_DIR}/SimpleAssert.h"
+		"${PROJECT_SOURCE_DIR}/stretchy_buffer.h"
+		"${PROJECT_SOURCE_DIR}/BVH.h"
 	)
 
 	set( SOURCES
 		"${PROJECT_SOURCE_DIR}/PhysicsStructs.c"
 		"${PROJECT_SOURCE_DIR}/PhysicsInterface.c"
+		"${PROJECT_SOURCE_DIR}/stretchy_buffer.c"
+		"${PROJECT_SOURCE_DIR}/BVH.c"
 	)
 
 	if( MSVC )
