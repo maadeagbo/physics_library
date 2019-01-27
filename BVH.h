@@ -4,54 +4,54 @@
 extern "C"
 {
 #endif
-	
+
 #include "PhysicsInterface.h"
-    enum BVHBaseType
-    {
-		BVH_TYPE_AABB = 0x1,
-		BVH_TYPE_OBB = 0x2,
-		BVH_TYPE_SPH = 0x4
-    };
+  enum BVHBaseType
+  {
+    BVH_TYPE_AABB = 0x1,
+    BVH_TYPE_OBB = 0x2,
+    BVH_TYPE_SPH = 0x4
+  };
 
-	struct BVHNodeData
-    {
-		int32_t id;
-		enum BVHBaseType base_type;
+  struct BVHNodeData
+  {
+    int32_t id;
+    enum BVHBaseType base_type;
 
-		struct AABBox cached_bbox;
-        union
-		{
-			struct OBBox obb;
-			struct AABBox aabb;
-			struct Sphere sphere;
-        } data;
-    };
-
-	struct BVHNode
+    struct AABBox cached_bbox;
+    union
 	{
-		int32_t id;
-		float node_cost;
+      struct OBBox obb;
+      struct AABBox aabb;
+      struct Sphere sphere;
+    } data;
+  };
 
-		int32_t left_child;
-		int32_t right_child;
-	};
+  struct BVHNode
+  {
+    int32_t id;
+    float node_cost;
 
-	struct BVHTree
-	{
-		struct BVHNode* node_bin;
-		struct BVHNodeData* data_bin;
+    int32_t left_child;
+    int32_t right_child;
+  };
 
-		uint32_t active_nodes;
-		uint32_t root_node;
-	};
+  struct BVHTree
+  {
+    struct BVHNode* node_bin;
+    struct BVHNodeData* data_bin;
 
-	void bvh_init_tree( struct BVHTree* tree_ptr, uint32_t max_nodes_count );
+    uint32_t active_nodes;
+    uint32_t root_node;
+  };
 
-	// Cost : surface area of aabb (based on projective geometry)
-	float bvh_calc_aabb_cost( struct AABBox* bbox );
-	float bvh_calc_sphere_cost( struct Sphere* sphere );
+  void bvh_init_tree( struct BVHTree* tree_ptr, uint32_t max_nodes_count );
 
-	uint32_t bvh_insert_node( struct BVHTree* tree, struct AABBox* bbox );
+  // Cost : surface area of aabb (based on projective geometry)
+  float bvh_calc_aabb_cost( struct AABBox* bbox );
+  float bvh_calc_sphere_cost( struct Sphere* sphere );
+
+  uint32_t bvh_insert_node( struct BVHTree* tree, struct AABBox* bbox );
 
 #ifdef __cplusplus
 }

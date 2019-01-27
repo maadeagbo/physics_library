@@ -25,54 +25,54 @@
 
 struct DebugStr
 {
-    char buffer[256];
+  char buffer[256];
 };
 
 struct Vec2f
 {
-    union {
-        struct
-        {
-            float x, y;
-        };
-        float data[2];
+  union {
+    struct
+    {
+      float x, y;
     };
+    float data[2];
+  };
 };
 
 struct Vec3f
 {
-    union {
-        struct
-        {
-            float x, y, z;
-        };
-        float data[3];
+  union {
+    struct
+    {
+      float x, y, z;
     };
+    float data[3];
+  };
 };
 
 struct Vec4f
 {
-    union {
-        struct
-        {
-            float x, y, z, w;
-        };
-        float data[4];
+  union {
+    struct
+    {
+      float x, y, z, w;
     };
+    float data[4];
+  };
 };
 
 struct Quat
 {
-    union {
-        struct
-        {
-            float i, j, k, real;
-        };
-        struct
-        {
-            float x, y, z, w;
-        };
+  union {
+    struct
+    {
+      float i, j, k, real;
     };
+    struct
+    {
+      float x, y, z, w;
+    };
+  };
 };
 
 struct DebugStr stringify_quat( struct Quat q );
@@ -82,17 +82,17 @@ struct DebugStr stringify_v3f( struct Vec3f v3 );
 struct DebugStr stringify_v4f( struct Vec4f v4 );
 
 #define MAT_LAYOUT( X, Y ) \
-    struct Mat##X##x##Y    \
-    {                      \
-        float data[Y][X];  \
-    }
+  struct Mat##X##x##Y      \
+  {                        \
+    float data[Y][X];      \
+  }
 
 #define STRINGIFY_MAT( X, Y ) \
-    struct DebugStr stringify_m##X##x##Y( struct Mat##X##x##Y m )
+  struct DebugStr stringify_m##X##x##Y( struct Mat##X##x##Y m )
 
 #define MAT_TYPES( X, Y ) \
-    MAT_LAYOUT( X, Y );   \
-    STRINGIFY_MAT( X, Y );
+  MAT_LAYOUT( X, Y );     \
+  STRINGIFY_MAT( X, Y );
 #include "PhysicsTypes.inl"
 
 //------------------------------------------------------------------------------
@@ -100,24 +100,24 @@ struct DebugStr stringify_v4f( struct Vec4f v4 );
 
 struct Vec3u
 {
-    union {
-        struct
-        {
-            uint32_t x, y, z;
-        };
-        uint32_t data[3];
+  union {
+    struct
+    {
+      uint32_t x, y, z;
     };
+    uint32_t data[3];
+  };
 };
 
 struct Vec4u
 {
-    union {
-        struct
-        {
-            uint32_t x, y, z, w;
-        };
-        uint32_t data[4];
+  union {
+    struct
+    {
+      uint32_t x, y, z, w;
     };
+    uint32_t data[4];
+  };
 };
 
 //------------------------------------------------------------------------------
@@ -125,19 +125,19 @@ struct Vec4u
 
 struct AABBox
 {
-	struct Vec3f min_corner;
-	struct Vec3f extents_xyz;
+  struct Vec3f m_MinCorner;
+  struct Vec3f m_ExtentsXYZ;
 };
 
 struct OBBox
 {
-	struct Vec3f min_corner;
-	struct Vec3f axis_xyz[3];
-	struct Vec3f extents_xyz[3];
+  struct Vec3f m_MinCorner;
+  struct Vec3f m_AxisXYZ[3];
+  struct Vec3f m_ExtentsXYZ[3];
 };
 
 struct Sphere
 {
-	struct Vec3f center;
-	float radius;
+  struct Vec3f m_Center;
+  float m_Radius;
 };
