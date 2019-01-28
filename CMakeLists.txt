@@ -64,40 +64,16 @@ if( NOT CREATE_PHYS_LIB )
 
 	include(CheckCCompilerFlag)
 	check_c_compiler_flag(-Wall HAS_WALL)
-	check_c_compiler_flag(-pedantic HAS_PEDANTIC)
-	check_c_compiler_flag(-O3 HAS_OPT3)
-	check_c_compiler_flag(-O2 HAS_OPT2)
-	check_c_compiler_flag(-Os HAS_OPT0S)
-	check_c_compiler_flag(-g HAS_DEBUG)
-
-	if( UNIX AND NOT USE_CLANG )
-		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -no-pie")
-	endif( UNIX AND NOT USE_CLANG )
-
-	if(HAS_WALL)
-		if(MSVC)
-			set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -W4 -WX")
-		else()
-			set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall -Werror")
-		endif(MSVC)
-	endif(HAS_WALL)
-
-	if(HAS_OPT0S)
-		set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL} -Os")
-	endif(HAS_OPT0S)
-
-	if(HAS_DEBUG)
-		set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g")
-		set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} -g")
-	endif(HAS_DEBUG)
-
-	if(HAS_OPT3)
-		set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3")
-	endif(HAS_OPT3)
-
-	if(HAS_OPT2)
-		set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} -O2")
-	endif(HAS_OPT2)
+	if( MSVC )
+		check_c_compiler_flag(/O2 HAS_OPT2)
+		check_c_compiler_flag(/O1 HAS_OPT1)
+		check_c_compiler_flag(/Os HAS_OPT0S)
+	else()
+		check_c_compiler_flag(-O3 HAS_OPT3)
+		check_c_compiler_flag(-O2 HAS_OPT2)
+		check_c_compiler_flag(-Os HAS_OPT0S)
+		check_c_compiler_flag(-g HAS_DEBUG)
+	endif( MSVC )
 
 ###########################################################################
 
@@ -140,29 +116,12 @@ if( NOT CREATE_PHYS_LIB )
 
 	target_include_directories( run_tests PRIVATE "${PROJECT_SOURCE_DIR}" )
 
-	if( NOT MSVC )
-	target_link_libraries( run_tests PRIVATE "-lm")
-	endif( NOT MSVC )
+	target_compile_options( run_tests PRIVATE $<$<C_COMPILER_ID:MSVC>:/W4 /WX /Qvec-report:2 $<$<CONFIG:DEBUG>:/Od> $<$<CONFIG:RELEASE>:/O2> $<$<CONFIG:MINSIZEREL>:/Os> $<$<CONFIG:RELWITHDEBINFO>:/O1>> )
+	target_compile_options( run_tests PRIVATE $<$<C_COMPILER_ID:CLANG>:-Wall -Werror -Wpedantic -Rpass=loop-vectorize -Rpass-missed=loop-vectorize -Rpass-analysis=loop-vectorize $<$<CONFIG:DEBUG>:-ggdb> $<$<CONFIG:RELEASE>:-O3> $<$<CONFIG:MINSIZEREL>:-Os> $<$<CONFIG:RELWITHDEBINFO>:-O2 -ggdb> > )
+	target_compile_options( run_tests PRIVATE $<$<C_COMPILER_ID:GNU>:-Wall -Werror -Wpedantic -no-pie -ftree-vectorize -fopt-info-vec-optimized -fopt-info-vec-missed $<$<CONFIG:DEBUG>:-ggdb> $<$<CONFIG:RELEASE>:-O3> $<$<CONFIG:MINSIZEREL>:-Os> $<$<CONFIG:RELWITHDEBINFO>:-O2 -ggdb> > )
 
-	# vectorization diagnostics
-	if( CMAKE_C_COMPILER_ID MATCHES "Clang" )
-		target_compile_options( run_tests PRIVATE
-			-Rpass=loop-vectorize
-	#		-Rpass-missed=loop-vectorize
-	#		-Rpass-analysis=loop-vectorize
-		)
-	elseif( CMAKE_C_COMPILER_ID MATCHES "GNU" )
-		target_compile_options( run_tests PRIVATE
-			-ftree-vectorize
-			-fopt-info-vec-optimized
-	#		-fopt-info-vec-missed
-		)
-	elseif( CMAKE_C_COMPILER_ID MATCHES "MSVC" )
-		target_compile_options( run_tests PRIVATE
-			"/Qvec-report:1"
-	#		"/Qvec-report:2"
-		)
-	endif( CMAKE_C_COMPILER_ID MATCHES "Clang" )
+	target_link_libraries( run_tests PRIVATE $<$<C_COMPILER_ID:GNU>:-lm> )
+	target_link_libraries( run_tests PRIVATE $<$<C_COMPILER_ID:CLANG>:-lm> )
 
 	# set visual studio startup project
 	set_property(DIRECTORY ${PROJECT_SOURCE_DIR}
@@ -195,22 +154,12 @@ else()
 
 	add_library( physics_lib STATIC ${SOURCES} )
 
-	target_include_directories( physics_lib PRIVATE
-		"${PROJECT_SOURCE_DIR}/physics_library"
-	)
+	target_include_directories( physics_lib PRIVATE "${PROJECT_SOURCE_DIR}/physics_library" )
 
 	target_compile_definitions( physics_lib PRIVATE "_CRT_SECURE_NO_WARNINGS" )
 
-	# vectorization diagnostics
-	if( CMAKE_C_COMPILER_ID MATCHES "Clang" )
-		target_compile_options( physics_lib PRIVATE -Rpass=loop-vectorize )
-	elseif( CMAKE_C_COMPILER_ID MATCHES "GNU" )
-		target_compile_options( physics_lib PRIVATE
-			-ftree-vectorize
-			-fopt-info-vec-optimized
-		)
-	elseif( CMAKE_C_COMPILER_ID MATCHES "MSVC" )
-		target_compile_options( physics_lib PRIVATE "/Qvec-report:1" )
-	endif( CMAKE_C_COMPILER_ID MATCHES "Clang" )
+	target_compile_options( physics_lib PRIVATE $<$<C_COMPILER_ID:MSVC>:/W4 /WX /Qvec-report:2 $<$<CONFIG:DEBUG>:/Od> $<$<CONFIG:RELEASE>:/O2> $<$<CONFIG:MINSIZEREL>:/Os> $<$<CONFIG:RELWITHDEBINFO>:/O1>> )
+	target_compile_options( physics_lib PRIVATE $<$<C_COMPILER_ID:CLANG>:-Wall -Werror -Wpedantic -Rpass=loop-vectorize -Rpass-missed=loop-vectorize -Rpass-analysis=loop-vectorize $<$<CONFIG:DEBUG>:-ggdb> $<$<CONFIG:RELEASE>:-O3> $<$<CONFIG:MINSIZEREL>:-Os> $<$<CONFIG:RELWITHDEBINFO>:-O2 -ggdb> > )
+	target_compile_options( physics_lib PRIVATE $<$<C_COMPILER_ID:GNU>:-Wall -Werror -Wpedantic -no-pie -ftree-vectorize -fopt-info-vec-optimized -fopt-info-vec-missed $<$<CONFIG:DEBUG>:-ggdb> $<$<CONFIG:RELEASE>:-O3> $<$<CONFIG:MINSIZEREL>:-Os> $<$<CONFIG:RELWITHDEBINFO>:-O2 -ggdb> > )
 
 endif( NOT CREATE_PHYS_LIB )
