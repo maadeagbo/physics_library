@@ -85,22 +85,22 @@ if( NOT CREATE_PHYS_LIB )
 ###########################################################################
 
 	set( HEADERS 
-		"${PROJECT_SOURCE_DIR}/PhysicsStructs.h"
-		"${PROJECT_SOURCE_DIR}/PhysicsInterface.h"
-		"${PROJECT_SOURCE_DIR}/SimpleAssert.h"
-		"${PROJECT_SOURCE_DIR}/stretchy_buffer.h"
-		"${PROJECT_SOURCE_DIR}/BVH.h"
+		"${CMAKE_CURRENT_LIST_DIR}/PhysicsStructs.h"
+		"${CMAKE_CURRENT_LIST_DIR}/PhysicsInterface.h"
+		"${CMAKE_CURRENT_LIST_DIR}/SimpleAssert.h"
+		"${CMAKE_CURRENT_LIST_DIR}/stretchy_buffer.h"
+		"${CMAKE_CURRENT_LIST_DIR}/BVH.h"
 	)
 
 	set( SOURCES
-		"${PROJECT_SOURCE_DIR}/PhysicsStructs.c"
-		"${PROJECT_SOURCE_DIR}/PhysicsInterface.c"
-		"${PROJECT_SOURCE_DIR}/stretchy_buffer.c"
-		"${PROJECT_SOURCE_DIR}/BVH.c"
+		"${CMAKE_CURRENT_LIST_DIR}/PhysicsStructs.c"
+		"${CMAKE_CURRENT_LIST_DIR}/PhysicsInterface.c"
+		"${CMAKE_CURRENT_LIST_DIR}/stretchy_buffer.c"
+		"${CMAKE_CURRENT_LIST_DIR}/BVH.c"
 	)
 
 	if( MSVC )
-		set( HEADERS ${HEADERS} "${PROJECT_SOURCE_DIR}/.clang-format" )
+		set( HEADERS ${HEADERS} "${CMAKE_CURRENT_LIST_DIR}/.clang-format" )
 	endif( MSVC )
 
 ##########################################################################
@@ -109,12 +109,12 @@ if( NOT CREATE_PHYS_LIB )
 	message( "\n--> Compiling physics library tests <--\n" )
 
 	if( MSVC )
-		add_executable( run_tests "${PROJECT_SOURCE_DIR}/tests.c" ${SOURCES} ${HEADERS} )
+		add_executable( run_tests "${CMAKE_CURRENT_LIST_DIR}/tests.c" ${SOURCES} ${HEADERS} )
 	else()
-		add_executable( run_tests "${PROJECT_SOURCE_DIR}/tests.c" ${SOURCES} )
+		add_executable( run_tests "${CMAKE_CURRENT_LIST_DIR}/tests.c" ${SOURCES} )
 	endif( MSVC )
 
-	target_include_directories( run_tests PRIVATE "${PROJECT_SOURCE_DIR}" )
+	target_include_directories( run_tests PRIVATE "${CMAKE_CURRENT_LIST_DIR}" )
 
 	target_compile_options( run_tests PRIVATE $<$<C_COMPILER_ID:MSVC>:/W4 /WX /Qvec-report:2 $<$<CONFIG:DEBUG>:/Od> $<$<CONFIG:RELEASE>:/O2> $<$<CONFIG:MINSIZEREL>:/Os> $<$<CONFIG:RELWITHDEBINFO>:/O1>> )
 	target_compile_options( run_tests PRIVATE $<$<C_COMPILER_ID:CLANG>:-Wall -Werror -Wpedantic -Rpass=loop-vectorize -Rpass-missed=loop-vectorize -Rpass-analysis=loop-vectorize $<$<CONFIG:DEBUG>:-ggdb> $<$<CONFIG:RELEASE>:-O3> $<$<CONFIG:MINSIZEREL>:-Os> $<$<CONFIG:RELWITHDEBINFO>:-O2 -ggdb> > )
@@ -124,7 +124,7 @@ if( NOT CREATE_PHYS_LIB )
 	target_link_libraries( run_tests PRIVATE $<$<C_COMPILER_ID:CLANG>:-lm> )
 
 	# set visual studio startup project
-	set_property(DIRECTORY ${PROJECT_SOURCE_DIR}
+	set_property(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
 				PROPERTY VS_STARTUP_PROJECT
 				run_tests )
 
@@ -148,13 +148,13 @@ else()
 	message( "\n--> Compiling physics library <--\n" )
 
 	set( SOURCES
-		"${PROJECT_SOURCE_DIR}/physics_library/PhysicsStructs.c"
-		"${PROJECT_SOURCE_DIR}/physics_library/PhysicsInterface.c"
+		"${CMAKE_CURRENT_LIST_DIR}/PhysicsStructs.c"
+		"${CMAKE_CURRENT_LIST_DIR}/PhysicsInterface.c"
 	)
 
 	add_library( physics_lib STATIC ${SOURCES} )
 
-	target_include_directories( physics_lib PRIVATE "${PROJECT_SOURCE_DIR}/physics_library" )
+	target_include_directories( physics_lib PRIVATE "${CMAKE_CURRENT_LIST_DIR}" )
 
 	target_compile_definitions( physics_lib PRIVATE "_CRT_SECURE_NO_WARNINGS" )
 
