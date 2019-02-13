@@ -152,7 +152,7 @@ else()
 		"${CMAKE_CURRENT_LIST_DIR}/PhysicsInterface.c"
 	)
 
-	add_library( physics_lib SHARED ${SOURCES} )
+	add_library( physics_lib STATIC ${SOURCES} )
 
 	target_include_directories( physics_lib PRIVATE "${CMAKE_CURRENT_LIST_DIR}" )
 
