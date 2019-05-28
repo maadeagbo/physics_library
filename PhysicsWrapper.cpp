@@ -137,7 +137,7 @@ Vec4f new_v4f( Vec4f v ) { return {v.x, v.y, v.z, v.w}; }
 
 Vec4f new_v4f( Mat4x4 v, uint32_t column )
 {
-  assertf( column <= 3, "Invalid column index (%u) for Mat4x4\n", column );
+  ASSERT_F( column <= 3, "Invalid column index (%u) for Mat4x4\n", column );
 
   return {
     v.data[column][0], v.data[column][1], v.data[column][2], v.data[column][3]};
