@@ -1,6 +1,8 @@
 #include "PhysicsInterface.h"
 #include <immintrin.h>
 
+#include "MemoryAllocator.h"
+
 #define UNUSED_VAR( X ) (void)X
 
 #ifdef _WIN32
@@ -22,6 +24,16 @@ float deg_to_rad( float deg )
 float rad_to_deg( float rad )
 {
   return rad * (float)57.295779513082320876798154814105;
+}
+
+void phys_system_init_heap()
+{
+  HeapInitBase( ( 0x1 << 20 ) * 10, 0 ); // initializing w/ 10 mB on main thread
+}
+
+void* phys_system_alloc( uint64_t bytes )
+{
+  return HeapAllocate( bytes, k_HeapHintNone, 1, 0, 0 ); // allocates from the main thread
 }
 
 //-----------------------------------------------------------------------------
@@ -525,7 +537,7 @@ struct Mat2x2 inverse_2x2( struct Mat2x2 m )
 {
   float det = determinant_2x2( m );
 
-  assertf( det > 0.f + EPSILON_F || det < 0.f + EPSILON_F,
+  ASSERT_F( det > 0.f + EPSILON_F || det < 0.f + EPSILON_F,
            "Cannot calculate inverse on degerate matrix %s\n",
            stringify_m2x2( m ).buffer );
 
@@ -540,7 +552,7 @@ struct Mat3x3 inverse_3x3( struct Mat3x3 m )
 {
   float det = determinant_3x3( m );
 
-  assertf( det > 0.f + EPSILON_F || det < 0.f + EPSILON_F,
+  ASSERT_F( det > 0.f + EPSILON_F || det < 0.f + EPSILON_F,
            "Cannot calculate inverse on degerate matrix %s\n",
            stringify_m3x3( m ).buffer );
 
@@ -594,7 +606,7 @@ struct Mat4x4 inverse_4x4( struct Mat4x4 m )
   float det = m.data[0][0] * adjoint.data[0][0] + m.data[0][1] * adjoint.data[1][0] + 
               m.data[0][2] * adjoint.data[2][0] + m.data[0][3] * adjoint.data[3][0];
 
-  assertf( det > 0.f + EPSILON_F || det < 0.f + EPSILON_F,
+  ASSERT_F( det > 0.f + EPSILON_F || det < 0.f + EPSILON_F,
            "Cannot calculate inverse on degerate matrix %s\n",
            stringify_m4x4( m ).buffer );
 

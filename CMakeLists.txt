@@ -87,16 +87,17 @@ if( NOT CREATE_PHYS_LIB )
 	set( HEADERS 
 		"${CMAKE_CURRENT_LIST_DIR}/PhysicsStructs.h"
 		"${CMAKE_CURRENT_LIST_DIR}/PhysicsInterface.h"
-		"${CMAKE_CURRENT_LIST_DIR}/SimpleAssert.h"
-		"${CMAKE_CURRENT_LIST_DIR}/stretchy_buffer.h"
+		"${CMAKE_CURRENT_LIST_DIR}/DebugLib.h"
+		"${CMAKE_CURRENT_LIST_DIR}/MemoryAllocator.h"
 		"${CMAKE_CURRENT_LIST_DIR}/BVH.h"
 	)
 
 	set( SOURCES
 		"${CMAKE_CURRENT_LIST_DIR}/PhysicsStructs.c"
 		"${CMAKE_CURRENT_LIST_DIR}/PhysicsInterface.c"
-		"${CMAKE_CURRENT_LIST_DIR}/stretchy_buffer.c"
+		"${CMAKE_CURRENT_LIST_DIR}/MemoryAllocator.c"
 		"${CMAKE_CURRENT_LIST_DIR}/BVH.c"
+		"${CMAKE_CURRENT_LIST_DIR}/DebugLib.c"
 	)
 
 	if( MSVC )
@@ -120,6 +121,7 @@ if( NOT CREATE_PHYS_LIB )
 	target_compile_options( run_tests PRIVATE $<$<C_COMPILER_ID:CLANG>:-Wall -Werror -Wpedantic -Rpass=loop-vectorize -Rpass-missed=loop-vectorize -Rpass-analysis=loop-vectorize $<$<CONFIG:DEBUG>:-ggdb> $<$<CONFIG:RELEASE>:-O3> $<$<CONFIG:MINSIZEREL>:-Os> $<$<CONFIG:RELWITHDEBINFO>:-O2 -ggdb> > )
 	target_compile_options( run_tests PRIVATE $<$<C_COMPILER_ID:GNU>:-Wall -Werror -Wpedantic -no-pie -ftree-vectorize -fopt-info-vec-optimized -fopt-info-vec-missed $<$<CONFIG:DEBUG>:-ggdb> $<$<CONFIG:RELEASE>:-O3> $<$<CONFIG:MINSIZEREL>:-Os> $<$<CONFIG:RELWITHDEBINFO>:-O2 -ggdb> > )
 
+	target_link_libraries( run_tests PRIVATE $<$<C_COMPILER_ID:MSVC>:Dbghelp> )
 	target_link_libraries( run_tests PRIVATE $<$<C_COMPILER_ID:GNU>:-lm> )
 	target_link_libraries( run_tests PRIVATE $<$<C_COMPILER_ID:CLANG>:-lm> )
 
@@ -153,6 +155,8 @@ else()
 	)
 
 	add_library( physics_lib STATIC ${SOURCES} )
+
+	target_link_libraries( physics_lib PRIVATE $<$<C_COMPILER_ID:MSVC>:Dbghelp> )
 
 	target_include_directories( physics_lib PRIVATE "${CMAKE_CURRENT_LIST_DIR}" )
 

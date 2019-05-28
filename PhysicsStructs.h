@@ -18,7 +18,7 @@
 #endif  // _WIN32
 
 #include <inttypes.h>
-#include "SimpleAssert.h"
+#include "DebugLib.h"
 
 // TODO : Figure out how to simulate __attribute__ ((aligned (16))) or alignas
 //		  on MSVC compiler ( in C )

@@ -57,7 +57,7 @@ int main( int argc, char const* argv[] )
     
 		printf( "     Magnitude (normalized):: %.5f\n", mag_norm );
 
-    assertf( mag_norm > 1.f - TEST_EPS && mag_norm < 1.f + TEST_EPS,
+    ASSERT_F( mag_norm > 1.f - TEST_EPS && mag_norm < 1.f + TEST_EPS,
              "Invalid magnitude (%.5f) for normalized vector",
              mag_norm );
 
@@ -71,7 +71,7 @@ int main( int argc, char const* argv[] )
     struct Vec3f val1 = add_v3f( new_val, test_vectors[i] );
     struct Vec3f val2 = add_v3f( test_vectors[i], new_val );
 
-    assertf( equals_v3f( val1, val2 ),
+    ASSERT_F( equals_v3f( val1, val2 ),
              "Algebraic identity #1 error::\n  %s\n != %s\n",
              stringify_v3f( val1 ).buffer,
              stringify_v3f( val2 ).buffer );
@@ -79,7 +79,7 @@ int main( int argc, char const* argv[] )
     val1 = add_v3f( add_v3f( test_vectors[i], other ), new_val );
     val2 = add_v3f( test_vectors[i], add_v3f( new_val, other ) );
 
-    assertf( equals_v3f( val1, val2 ),
+    ASSERT_F( equals_v3f( val1, val2 ),
              "Algebraic identity #2 error::\n  %s\n != %s\n",
              stringify_v3f( val1 ).buffer,
              stringify_v3f( val2 ).buffer );
@@ -87,14 +87,14 @@ int main( int argc, char const* argv[] )
     val1 = sub_v3f( test_vectors[i], new_val );
     val2 = add_v3f( test_vectors[i], mult_v3f( new_val, -1.f ) );
 
-    assertf( equals_v3f( val1, val2 ),
+    ASSERT_F( equals_v3f( val1, val2 ),
              "Algebraic identity #3 error::\n  %s\n != %s\n",
              stringify_v3f( val1 ).buffer,
              stringify_v3f( val2 ).buffer );
 
     val2 = mult_v3f( mult_v3f( new_val, -1.f ), -1.f );
 
-    assertf( equals_v3f( new_val, val2 ),
+    ASSERT_F( equals_v3f( new_val, val2 ),
              "Algebraic identity #4 error::\n  %s\n != %s\n",
              stringify_v3f( val1 ).buffer,
              stringify_v3f( val2 ).buffer );
@@ -102,7 +102,7 @@ int main( int argc, char const* argv[] )
     val1 = ( struct Vec3f ){.x = 0.f};
     val2 = add_v3f( new_val, mult_v3f( new_val, -1.f ) );
 
-    assertf( equals_v3f( val1, val2 ),
+    ASSERT_F( equals_v3f( val1, val2 ),
              "Algebraic identity #5 error::\n  %s\n != %s\n",
              stringify_v3f( val1 ).buffer,
              stringify_v3f( val2 ).buffer );
@@ -110,7 +110,7 @@ int main( int argc, char const* argv[] )
     val1 = add_v3f( new_val, ( struct Vec3f ){.x = 0.f} );
     val2 = add_v3f( ( struct Vec3f ){.x = 0.f}, new_val );
 
-    assertf( equals_v3f( val1, val2 ),
+    ASSERT_F( equals_v3f( val1, val2 ),
              "Algebraic identity #6 error::\n  %s\n != %s\n",
              stringify_v3f( val1 ).buffer,
              stringify_v3f( val2 ).buffer );
@@ -120,7 +120,7 @@ int main( int argc, char const* argv[] )
 
     float mag1 = magnitude_v3f( val1 );
 
-    assertf( dot_v3f( val1, val1 ) >= ( mag1 * mag1 - TEST_EPS ) &&
+    ASSERT_F( dot_v3f( val1, val1 ) >= ( mag1 * mag1 - TEST_EPS ) &&
                dot_v3f( val1, val1 ) <= ( mag1 * mag1 + TEST_EPS ),
              "Algebraic identity #7 error:: %.5f != %.5f\n",
              dot_v3f( val1, val1 ),
@@ -129,7 +129,7 @@ int main( int argc, char const* argv[] )
     mag1 = dot_v3f( val2, val1 );
     float mag2 = dot_v3f( val1, val2 );
 
-    assertf( mag1 >= ( mag2 - TEST_EPS ) && mag1 <= ( mag2 + TEST_EPS ),
+    ASSERT_F( mag1 >= ( mag2 - TEST_EPS ) && mag1 <= ( mag2 + TEST_EPS ),
              "Algebraic identity #8 error:: %.5f != %.5f\n",
              mag1,
              mag2 );
@@ -137,7 +137,7 @@ int main( int argc, char const* argv[] )
     mag1 = dot_v3f( val1, add_v3f( val2, other ) );
     mag2 = dot_v3f( val1, val2 ) + dot_v3f( val1, other );
 
-    assertf( mag1 >= ( mag2 - TEST_EPS ) && mag1 <= ( mag2 + TEST_EPS ),
+    ASSERT_F( mag1 >= ( mag2 - TEST_EPS ) && mag1 <= ( mag2 + TEST_EPS ),
              "Algebraic identity #9 error:: %.5f != %.5f\n",
              mag1,
              mag2 );
@@ -145,7 +145,7 @@ int main( int argc, char const* argv[] )
     mag1 = dot_v3f( mult_v3f( val1, 2.f ), mult_v3f( val2, 4.f ) );
     mag2 = dot_v3f( val1, val2 ) * 2.f * 4.f;
 
-    assertf( mag1 >= ( mag2 - TEST_EPS ) && mag1 <= ( mag2 + TEST_EPS ),
+    ASSERT_F( mag1 >= ( mag2 - TEST_EPS ) && mag1 <= ( mag2 + TEST_EPS ),
              "Algebraic identity #10 error:: %.5f != %.5f\n",
              mag1,
              mag2 );
@@ -153,21 +153,21 @@ int main( int argc, char const* argv[] )
     other = cross_v3f( val1, val2 );
     new_val = mult_v3f( cross_v3f( val2, val1 ), -1.f );
 
-    assertf( equals_v3f( other, new_val ),
+    ASSERT_F( equals_v3f( other, new_val ),
              "Algebraic identity #11 error::\n  %s\n != %s\n",
              stringify_v3f( other ).buffer,
              stringify_v3f( new_val ).buffer );
 
     new_val = cross_v3f( val1, val1 );
 
-    assertf( equals_v3f( new_val, ( struct Vec3f ){0.f} ),
+    ASSERT_F( equals_v3f( new_val, ( struct Vec3f ){0.f} ),
              "Algebraic identity #12 error::\n  %s\n",
              stringify_v3f( new_val ).buffer );
 
     other = cross_v3f( val1, ( struct Vec3f ){0.f} );
     new_val = cross_v3f( ( struct Vec3f ){0.f}, val1 );
 
-    assertf( equals_v3f( other, new_val ) && equals_v3f( other, ( struct Vec3f ){0.f} ),
+    ASSERT_F( equals_v3f( other, new_val ) && equals_v3f( other, ( struct Vec3f ){0.f} ),
              "Algebraic identity #13 error::\n  %s\n != %s\n",
              stringify_v3f( other ).buffer,
              stringify_v3f( new_val ).buffer );
@@ -175,7 +175,7 @@ int main( int argc, char const* argv[] )
     mag1 = dot_v3f( val1, cross_v3f( val1, val2 ) );
     mag2 = dot_v3f( val2, cross_v3f( val1, val2 ) );
 
-    assertf( mag1 >= ( mag2 - TEST_EPS ) && mag1 <= ( mag2 + TEST_EPS ) && mag1 >= -TEST_EPS && mag1 <= TEST_EPS,
+    ASSERT_F( mag1 >= ( mag2 - TEST_EPS ) && mag1 <= ( mag2 + TEST_EPS ) && mag1 >= -TEST_EPS && mag1 <= TEST_EPS,
              "Algebraic identity #14 error::\n  %.5f != %.5f",
              mag1,
              mag2 );
@@ -184,7 +184,7 @@ int main( int argc, char const* argv[] )
     mag1 = dot_v3f( val1, cross_v3f( other, val2 ) );
     mag2 = dot_v3f( val2, cross_v3f( val1, other ) );
 
-    assertf( mag1 >= ( mag2 - TEST_EPS ) && mag1 <= ( mag2 + TEST_EPS ),
+    ASSERT_F( mag1 >= ( mag2 - TEST_EPS ) && mag1 <= ( mag2 + TEST_EPS ),
              "Algebraic identity #15 error::\n  %.5f != %.5f",
              mag1,
              mag2 );

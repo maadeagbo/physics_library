@@ -7,6 +7,10 @@ float deg_to_rad( float deg );
 
 float rad_to_deg( float rad );
 
+void  phys_system_init_heap();
+
+void* phys_system_alloc( uint64_t bytes );
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 

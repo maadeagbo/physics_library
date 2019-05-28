@@ -43,6 +43,8 @@ extern "C"
 
     uint32_t active_nodes;
     uint32_t root_node;
+
+    uint32_t max_bin_count;
   };
 
   void bvh_init_tree( struct BVHTree* tree_ptr, uint32_t max_nodes_count );

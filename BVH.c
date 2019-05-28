@@ -1,48 +1,48 @@
 #include "BVH.h"
 
-#include "stretchy_buffer.h"
-
 void bvh_init_tree( struct BVHTree* tree_ptr, uint32_t max_nodes_count )
 {
-  assertf( tree_ptr && max_nodes_count != 0,
+  ASSERT_F( tree_ptr && max_nodes_count != 0,
            "Invalid input to BVH init: tree_ptr(%s), max_nodes_count(%u)",
            tree_ptr == NULL ? "null" : "valid",
            max_nodes_count );
 
-  sb_add( tree_ptr->node_bin, (int)max_nodes_count );
-  sb_add( tree_ptr->data_bin, (int)max_nodes_count );
+  tree_ptr->node_bin = (struct BVHNode*)phys_system_alloc( sizeof( struct BVHNode ) * max_nodes_count );
+  tree_ptr->data_bin = (struct BVHNodeData*)phys_system_alloc( sizeof( struct BVHNodeData ) * max_nodes_count );
 
   tree_ptr->active_nodes = 0;
 
-  assertf( tree_ptr->node_bin && tree_ptr->data_bin,
+  ASSERT_F( tree_ptr->node_bin && tree_ptr->data_bin,
            "Failed to allocate space for BVH tree" );
+
+  tree_ptr->max_bin_count = max_nodes_count;
 }
 
 float bvh_calc_aabb_cost( struct AABBox* bbox )
 {
-  assertf( bbox, "Null AABBox parameter" );
+  ASSERT_F( bbox, "Null AABBox parameter" );
 
   return bbox->m_ExtentsXYZ.x * ( bbox->m_ExtentsXYZ.y + bbox->m_ExtentsXYZ.z ) + bbox->m_ExtentsXYZ.y * bbox->m_ExtentsXYZ.z;
 }
 
 float bvh_calc_sphere_cost( struct Sphere* sphere )
 {
-   assertf( sphere, "Null Sphere parameter" );
+   ASSERT_F( sphere, "Null Sphere parameter" );
 
   return sphere->m_Radius * sphere->m_Radius;
 }
 
 uint32_t bvh_insert_node( struct BVHTree* tree, struct AABBox* bbox )
 {
-  assertf( tree && bbox,
+  ASSERT_F( tree && bbox,
            "Invalid input provided : tree (%s), bbox (%s)",
            tree ? "valid" : "null",
            bbox ? "valid" : "null" );
 
-  assertf( tree->active_nodes < (uint32_t)sb_count( tree->node_bin ),
+  ASSERT_F( tree->active_nodes < tree->max_bin_count,
            "BVH tree bin oob exception : %u < %u",
            tree->active_nodes,
-           (uint32_t)sb_count( tree->node_bin ) );
+           tree->max_bin_count );
 
   uint32_t node_idx = tree->active_nodes;
   tree->active_nodes++;
