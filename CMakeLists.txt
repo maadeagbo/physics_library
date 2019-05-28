@@ -152,6 +152,8 @@ else()
 	set( SOURCES
 		"${CMAKE_CURRENT_LIST_DIR}/PhysicsStructs.c"
 		"${CMAKE_CURRENT_LIST_DIR}/PhysicsInterface.c"
+    "${CMAKE_CURRENT_LIST_DIR}/MemoryAllocator.c"
+    "${CMAKE_CURRENT_LIST_DIR}/DebugLib.c"
 	)
 
 	add_library( physics_lib STATIC ${SOURCES} )
