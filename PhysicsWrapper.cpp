@@ -1,4 +1,4 @@
-#include "PhysicsWrapper.h"
+#include "PhysicsWrapper.hpp"
 
 DebugStr stringify_v( Vec2f v2 ) { return stringify_v2f( v2 ); }
 DebugStr stringify_v( Vec3f v3 ) { return stringify_v3f( v3 ); }
